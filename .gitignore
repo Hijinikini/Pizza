@@ -1,0 +1,13 @@
+# Папки сборки
+bin/
+obj/
+
+# Файлы Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Прочее
+*.log

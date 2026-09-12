@@ -19,7 +19,7 @@ namespace PizzaModel
         public override string ToString()
         {
             string type = Type ? "ПП":"" ;
-            return $"[{Id}] {Name} ({Size}) — {Price} руб. соответсвтует {Type}\n ";
+            return $"[{Id}] {Name} ({Size}) — {Price} руб. {type}\n ";
         }
     }
      

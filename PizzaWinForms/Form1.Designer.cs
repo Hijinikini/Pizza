@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            GridPizzas_SelectionChanged = new DataGridView();
             Пиццы = new Label();
             textBox1 = new TextBox();
             textBox2 = new TextBox();
@@ -40,25 +39,20 @@
             RefreshGrid = new Button();
             btnFilterBySize = new Button();
             BtnSortByPrice = new Button();
-            ((System.ComponentModel.ISupportInitialize)GridPizzas_SelectionChanged).BeginInit();
+            Grid = new DataGridView();
+            label1 = new Label();
+            label2 = new Label();
+            label3 = new Label();
+            textBox4 = new TextBox();
+            label4 = new Label();
+            ((System.ComponentModel.ISupportInitialize)Grid).BeginInit();
             SuspendLayout();
-            // 
-            // GridPizzas_SelectionChanged
-            // 
-            GridPizzas_SelectionChanged.BackgroundColor = Color.AliceBlue;
-            GridPizzas_SelectionChanged.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            GridPizzas_SelectionChanged.Location = new Point(12, 32);
-            GridPizzas_SelectionChanged.Name = "GridPizzas_SelectionChanged";
-            GridPizzas_SelectionChanged.RowHeadersWidth = 51;
-            GridPizzas_SelectionChanged.Size = new Size(610, 359);
-            GridPizzas_SelectionChanged.TabIndex = 0;
-            GridPizzas_SelectionChanged.CellContentClick += GridPizzas_SelectionChanged_CellContentClick;
-            GridPizzas_SelectionChanged.SelectionChanged += GridPizzas_SelectionChanged_SelectionChanged;
             // 
             // Пиццы
             // 
+            Пиццы.Anchor = AnchorStyles.Left;
             Пиццы.AutoSize = true;
-            Пиццы.Location = new Point(12, 9);
+            Пиццы.Location = new Point(12, 6);
             Пиццы.Name = "Пиццы";
             Пиццы.Size = new Size(58, 20);
             Пиццы.TabIndex = 1;
@@ -66,35 +60,36 @@
             // 
             // textBox1
             // 
-            textBox1.ForeColor = SystemColors.ActiveBorder;
-            textBox1.Location = new Point(641, 38);
+            textBox1.Anchor = AnchorStyles.Left;
+            textBox1.ForeColor = SystemColors.ActiveCaptionText;
+            textBox1.Location = new Point(707, 58);
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(183, 27);
             textBox1.TabIndex = 2;
-            textBox1.Text = "Название";
             // 
             // textBox2
             // 
-            textBox2.ForeColor = SystemColors.ActiveBorder;
-            textBox2.Location = new Point(641, 83);
+            textBox2.Anchor = AnchorStyles.Left;
+            textBox2.ForeColor = SystemColors.ActiveCaptionText;
+            textBox2.Location = new Point(707, 111);
             textBox2.Name = "textBox2";
             textBox2.Size = new Size(183, 27);
             textBox2.TabIndex = 3;
-            textBox2.Text = "Цена";
             // 
             // textBox3
             // 
-            textBox3.ForeColor = SystemColors.ActiveBorder;
-            textBox3.Location = new Point(641, 127);
+            textBox3.Anchor = AnchorStyles.Left;
+            textBox3.ForeColor = SystemColors.ActiveCaptionText;
+            textBox3.Location = new Point(707, 169);
             textBox3.Name = "textBox3";
             textBox3.Size = new Size(183, 27);
             textBox3.TabIndex = 4;
-            textBox3.Text = "Размер";
             // 
             // checkBox1
             // 
+            checkBox1.Anchor = AnchorStyles.Left;
             checkBox1.AutoSize = true;
-            checkBox1.Location = new Point(641, 169);
+            checkBox1.Location = new Point(707, 202);
             checkBox1.Name = "checkBox1";
             checkBox1.Size = new Size(110, 24);
             checkBox1.TabIndex = 5;
@@ -103,7 +98,8 @@
             // 
             // btnAdd
             // 
-            btnAdd.Location = new Point(12, 420);
+            btnAdd.Anchor = AnchorStyles.Left;
+            btnAdd.Location = new Point(12, 464);
             btnAdd.Name = "btnAdd";
             btnAdd.Size = new Size(122, 39);
             btnAdd.TabIndex = 6;
@@ -113,7 +109,8 @@
             // 
             // BtnUpdate
             // 
-            BtnUpdate.Location = new Point(140, 420);
+            BtnUpdate.Anchor = AnchorStyles.Left;
+            BtnUpdate.Location = new Point(140, 464);
             BtnUpdate.Name = "BtnUpdate";
             BtnUpdate.Size = new Size(122, 39);
             BtnUpdate.TabIndex = 7;
@@ -123,7 +120,8 @@
             // 
             // BtnDelete
             // 
-            BtnDelete.Location = new Point(268, 420);
+            BtnDelete.Anchor = AnchorStyles.Left;
+            BtnDelete.Location = new Point(268, 464);
             BtnDelete.Name = "BtnDelete";
             BtnDelete.Size = new Size(122, 39);
             BtnDelete.TabIndex = 8;
@@ -133,7 +131,8 @@
             // 
             // RefreshGrid
             // 
-            RefreshGrid.Location = new Point(396, 420);
+            RefreshGrid.Anchor = AnchorStyles.Left;
+            RefreshGrid.Location = new Point(396, 464);
             RefreshGrid.Name = "RefreshGrid";
             RefreshGrid.Size = new Size(122, 39);
             RefreshGrid.TabIndex = 9;
@@ -143,7 +142,8 @@
             // 
             // btnFilterBySize
             // 
-            btnFilterBySize.Location = new Point(12, 465);
+            btnFilterBySize.Anchor = AnchorStyles.Left;
+            btnFilterBySize.Location = new Point(12, 509);
             btnFilterBySize.Name = "btnFilterBySize";
             btnFilterBySize.Size = new Size(250, 39);
             btnFilterBySize.TabIndex = 10;
@@ -153,7 +153,8 @@
             // 
             // BtnSortByPrice
             // 
-            BtnSortByPrice.Location = new Point(268, 465);
+            BtnSortByPrice.Anchor = AnchorStyles.Left;
+            BtnSortByPrice.Location = new Point(268, 509);
             BtnSortByPrice.Name = "BtnSortByPrice";
             BtnSortByPrice.Size = new Size(250, 39);
             BtnSortByPrice.TabIndex = 11;
@@ -161,11 +162,77 @@
             BtnSortByPrice.UseVisualStyleBackColor = true;
             BtnSortByPrice.Click += BtnSortByPrice_Click;
             // 
+            // Grid
+            // 
+            Grid.Anchor = AnchorStyles.Left;
+            Grid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            Grid.Location = new Point(12, 35);
+            Grid.Name = "Grid";
+            Grid.RowHeadersWidth = 51;
+            Grid.Size = new Size(670, 405);
+            Grid.TabIndex = 12;
+            Grid.CellContentClick += Grid_CellContentClick;
+            // 
+            // label1
+            // 
+            label1.Anchor = AnchorStyles.Left;
+            label1.AutoSize = true;
+            label1.Location = new Point(707, 35);
+            label1.Name = "label1";
+            label1.Size = new Size(77, 20);
+            label1.TabIndex = 13;
+            label1.Text = "Название";
+            // 
+            // label2
+            // 
+            label2.Anchor = AnchorStyles.Left;
+            label2.AutoSize = true;
+            label2.Location = new Point(707, 146);
+            label2.Name = "label2";
+            label2.Size = new Size(60, 20);
+            label2.TabIndex = 14;
+            label2.Text = "Размер";
+            // 
+            // label3
+            // 
+            label3.Anchor = AnchorStyles.Left;
+            label3.AutoSize = true;
+            label3.Location = new Point(707, 88);
+            label3.Name = "label3";
+            label3.Size = new Size(45, 20);
+            label3.TabIndex = 15;
+            label3.Text = "Цена";
+            // 
+            // textBox4
+            // 
+            textBox4.Anchor = AnchorStyles.Left;
+            textBox4.ForeColor = SystemColors.ActiveCaptionText;
+            textBox4.Location = new Point(704, 252);
+            textBox4.Name = "textBox4";
+            textBox4.Size = new Size(63, 27);
+            textBox4.TabIndex = 16;
+            // 
+            // label4
+            // 
+            label4.Anchor = AnchorStyles.Left;
+            label4.AutoSize = true;
+            label4.Location = new Point(707, 229);
+            label4.Name = "label4";
+            label4.Size = new Size(24, 20);
+            label4.TabIndex = 17;
+            label4.Text = "ID";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(997, 726);
+            ClientSize = new Size(969, 609);
+            Controls.Add(label4);
+            Controls.Add(textBox4);
+            Controls.Add(label3);
+            Controls.Add(label2);
+            Controls.Add(label1);
+            Controls.Add(Grid);
             Controls.Add(BtnSortByPrice);
             Controls.Add(btnFilterBySize);
             Controls.Add(RefreshGrid);
@@ -177,17 +244,14 @@
             Controls.Add(textBox2);
             Controls.Add(textBox1);
             Controls.Add(Пиццы);
-            Controls.Add(GridPizzas_SelectionChanged);
             Name = "Form1";
             Text = "Пиццерия";
-            ((System.ComponentModel.ISupportInitialize)GridPizzas_SelectionChanged).EndInit();
+            ((System.ComponentModel.ISupportInitialize)Grid).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
-
-        private DataGridView GridPizzas_SelectionChanged;
         private Label Пиццы;
         private TextBox textBox1;
         private TextBox textBox2;
@@ -199,5 +263,11 @@
         private Button RefreshGrid;
         private Button btnFilterBySize;
         private Button BtnSortByPrice;
+        private DataGridView Grid;
+        private Label label1;
+        private Label label2;
+        private Label label3;
+        private TextBox textBox4;
+        private Label label4;
     }
 }

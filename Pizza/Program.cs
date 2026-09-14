@@ -6,10 +6,7 @@ namespace Pizza
         static void Main()
         {
             var logic = new Logic();
-            logic.Create("Пипперони", 500, true, 30);
-            logic.Create("Маргарита", 350, false, 25);
-            logic.Create("Песто", 700, true, 20);
-            logic.Create("Грибная", 650, false, 30);
+            
             while (true)
             {
                 

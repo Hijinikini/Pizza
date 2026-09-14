@@ -32,6 +32,7 @@ namespace PizzaWinForms
                 textBox1.Text = "";
                 textBox2.Text = "";
                 textBox3.Text = "";
+                textBox4.Text = "";
                 checkBox1.Checked = false;
             }
             catch (Exception ex)
@@ -81,17 +82,31 @@ namespace PizzaWinForms
 
 
 
-        private void btnFilterBySize_Click(object sender, EventArgs e) { }
+        private void btnFilterBySize_Click(object sender, EventArgs e)
+        {
+            
+            if (!int.TryParse(textBox3.Text, out int size)) return;
 
-        private void BtnSortByPrice_Click(object sender, EventArgs e) { }
+            var sorted = _logic.Filter_size(size);
+
+            Grid.DataSource = null;
+            Grid.DataSource = sorted
+                .Select(p => new
+                {
+                    p.Id,
+                    Название = p.Name,
+                    Цена = p.Price,
+                    ПП = p.Type ? "Да" : "Нет",
+                    Размер = p.Size
+                })
+                .ToList();
+        }
+
+        
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            _logic.Create("Пипперони", 500m, true, 30);
-            _logic.Create("Маргарита", 350m, false, 25);
-            _logic.Create("Песто", 700m, true, 20);
-            _logic.Create("Грибная", 650m, false, 30);
-            RefreshGrid2();
+
 
         }
         private void RefreshGrid2()
@@ -103,7 +118,7 @@ namespace PizzaWinForms
                     p.Id,
                     Название = p.Name,
                     Цена = p.Price,
-                    Вегетарианская = p.Type ? "Да" : "Нет",
+                    ПП = p.Type ? "Да" : "Нет",
                     Размер = p.Size
                 })
                 .ToList();
@@ -112,11 +127,7 @@ namespace PizzaWinForms
 
         private void Grid_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            _logic.Create("Пипперони", 500m, true, 30);
-            _logic.Create("Маргарита", 350m, false, 25);
-            _logic.Create("Песто", 700m, true, 20);
-            _logic.Create("Грибная", 650m, false, 30);
-            RefreshGrid2();
+
         }
 
         private void RefreshGrid_Click(object sender, EventArgs e)
@@ -124,6 +135,22 @@ namespace PizzaWinForms
 
         }
 
-        
+        private void BtnSortByPrice_Click(object sender, EventArgs e)
+        {
+            var sorted = _logic.Sort_price();
+
+            Grid.DataSource = null;
+            Grid.DataSource = sorted
+                .Select(p => new
+                {
+                    p.Id,
+                    Название = p.Name,
+                    Цена = p.Price,
+                    ПП = p.Type ? "Да" : "Нет",
+                    Размер = p.Size
+                })
+                .ToList();
+
+        }
     }
 }

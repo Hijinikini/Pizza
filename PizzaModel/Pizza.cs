@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 
 namespace PizzaModel
 {
-    /// <summary>
-    /// Сущность "Пицца"
-    /// </summary>
+  
     public class Pizza
     {
         public int Id { get; set; }

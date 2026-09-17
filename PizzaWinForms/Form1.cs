@@ -1,61 +1,108 @@
-﻿using Microsoft.VisualBasic.Logging;
-using PizzaModel;
+﻿using PizzaModel;
+
+
 
 namespace PizzaWinForms
 {
     public partial class Form1 : Form
     {
         private readonly Logic _logic = new Logic();
+
         public Form1()
         {
             InitializeComponent();
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e) { }
+        /// <summary>
+        /// Добавляет пиццу.
+        /// </summary>
         private void BtnAdd_Click_Click(object sender, EventArgs e)
         {
-
             try
             {
+                if (!decimal.TryParse(textBox2.Text, out decimal price))
+                {
+                    MessageBox.Show("Цена введена неправильно.");
+                    return;
+                }
+
+                if (!int.TryParse(textBox3.Text, out int size))
+                {
+                    MessageBox.Show("Размер введён неправильно.");
+                    return;
+                }
 
                 _logic.Create(
                     textBox1.Text,
-                    decimal.Parse(textBox2.Text),
+                    price,
                     checkBox1.Checked,
-                    int.Parse(textBox3.Text)
+                    size
                 );
 
-
                 RefreshGrid2();
+                ClearFields();
 
-
-                textBox1.Text = "";
-                textBox2.Text = "";
-                textBox3.Text = "";
-                textBox4.Text = "";
-                checkBox1.Checked = false;
+                MessageBox.Show("Пицца добавлена.");
             }
             catch (Exception ex)
             {
-
                 MessageBox.Show("Ошибка: " + ex.Message);
             }
         }
+
+        /// <summary>
+        /// Изменяет пиццу.
+        /// </summary>
+        /// <summary>
+        /// Изменяет выбранную пиццу.
+        /// </summary>
         private void BtnUpdate_Click(object sender, EventArgs e)
         {
             try
             {
-                int id = int.Parse(textBox4.Text);   // читаем Id из поля
+                if (Grid.CurrentRow == null)
+                {
+                    MessageBox.Show("Сначала выберите пиццу в таблице.");
+                    return;
+                }
 
-                _logic.Update(
+                object value = Grid.CurrentRow.Cells["Id"].Value;
+
+                if (value == null || !int.TryParse(value.ToString(), out int id))
+                {
+                    MessageBox.Show("Не удалось определить ID пиццы.");
+                    return;
+                }
+
+                if (!decimal.TryParse(textBox2.Text, out decimal price))
+                {
+                    MessageBox.Show("Цена введена неправильно.");
+                    return;
+                }
+
+                if (!int.TryParse(textBox3.Text, out int size))
+                {
+                    MessageBox.Show("Размер введён неправильно.");
+                    return;
+                }
+
+                bool result = _logic.Update(
                     id,
                     textBox1.Text,
-                    decimal.Parse(textBox2.Text),
+                    price,
                     checkBox1.Checked,
-                    int.Parse(textBox3.Text)
+                    size
                 );
 
-                RefreshGrid2();
+                if (result)
+                {
+                    RefreshGrid2();
+                    MessageBox.Show("Пицца изменена.");
+                }
+                else
+                {
+                    MessageBox.Show("Пицца не найдена.");
+                }
             }
             catch (Exception ex)
             {
@@ -63,55 +110,133 @@ namespace PizzaWinForms
             }
         }
 
+        /// <summary>
+        /// Удаляет выбранную пиццу.
+        /// </summary>
         private void BtnDelete_Click(object sender, EventArgs e)
         {
-            if (Grid.CurrentRow == null)
+            try
             {
-                MessageBox.Show("Выберите пиццу в таблице");
-                return;
+                if (Grid.CurrentRow == null)
+                {
+                    MessageBox.Show("Выберите пиццу в таблице.");
+                    return;
+                }
+
+                object value = Grid.CurrentRow.Cells["Id"].Value;
+
+                if (value == null)
+                {
+                    MessageBox.Show("Не удалось получить ID.");
+                    return;
+                }
+
+                if (!int.TryParse(value.ToString(), out int id))
+                {
+                    MessageBox.Show("ID введён неправильно.");
+                    return;
+                }
+
+                if (_logic.Delete(id))
+                {
+                    RefreshGrid2();
+                    MessageBox.Show("Пицца удалена.");
+                }
+                else
+                {
+                    MessageBox.Show("Пицца не найдена.");
+                }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка: " + ex.Message);
+            }
+        }
 
-            var val = Grid.CurrentRow.Cells["Id"].Value;
-            if (val == null) return;
-            int id = Convert.ToInt32(val);
-
-            _logic.Delete(id);
-
+        /// <summary>
+        /// Обновляет таблицу.
+        /// </summary>
+        private void RefreshGrid_Click(object sender, EventArgs e)
+        {
             RefreshGrid2();
         }
 
-
-
-        private void btnFilterBySize_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Ищет пиццы по диапазону цены.
+        /// </summary>
+        private void BtnFilterByPrice_Click(object sender, EventArgs e)
         {
-            
-            if (!int.TryParse(textBox3.Text, out int size)) return;
-
-            var sorted = _logic.Filter_size(size);
-
-            Grid.DataSource = null;
-            Grid.DataSource = sorted
-                .Select(p => new
+            try
+            {
+                if (!decimal.TryParse(textBox5.Text, out decimal minPrice))
                 {
-                    p.Id,
-                    Название = p.Name,
-                    Цена = p.Price,
-                    ПП = p.Type ? "Да" : "Нет",
-                    Размер = p.Size
-                })
-                .ToList();
+                    MessageBox.Show("Минимальная цена введена неправильно.");
+                    return;
+                }
+
+                if (!decimal.TryParse(textBox6.Text, out decimal maxPrice))
+                {
+                    MessageBox.Show("Максимальная цена введена неправильно.");
+                    return;
+                }
+
+                List<Pizza> pizzas =
+                    _logic.FilterByPrice(minPrice, maxPrice);
+
+                if (pizzas.Count == 0)
+                {
+                    MessageBox.Show("Пицц в этом диапазоне нет.");
+                    return;
+                }
+
+                Grid.DataSource = null;
+
+                Grid.DataSource = pizzas
+                    .Select(p => new
+                    {
+                        p.Id,
+                        Название = p.Name,
+                        Цена = p.Price,
+                        ПП = p.Type ? "Да" : "Нет",
+                        Размер = p.Size
+                    })
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка: " + ex.Message);
+            }
         }
 
-        
-
-        private void Form1_Load(object sender, EventArgs e)
+        /// <summary>
+        /// Показывает статистику.
+        /// </summary>
+        private void BtnSortByPrice_Click(object sender, EventArgs e)
         {
+            try
+            {
+                string statistics = _logic.GetStatistics();
 
-
+                MessageBox.Show(
+                    statistics,
+                    "Статистика",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка: " + ex.Message);
+            }
         }
+
+        /// <summary>
+        /// Обновляет таблицу с пиццами.
+        /// </summary>
         private void RefreshGrid2()
         {
             Grid.DataSource = null;
+
             Grid.DataSource = _logic.ReadAll()
                 .Select(p => new
                 {
@@ -124,33 +249,32 @@ namespace PizzaWinForms
                 .ToList();
         }
 
-
-        private void Grid_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        /// <summary>
+        /// Очищает поля ввода.
+        /// </summary>
+        private void ClearFields()
         {
-
+            textBox1.Text = "";
+            textBox2.Text = "";
+            textBox3.Text = "";
+            textBox4.Text = "";
+            checkBox1.Checked = false;
         }
 
-        private void RefreshGrid_Click(object sender, EventArgs e)
+        private void textBox1_TextChanged(object sender, EventArgs e)
         {
-
         }
 
-        private void BtnSortByPrice_Click(object sender, EventArgs e)
+        private void Form1_Load(object sender, EventArgs e)
         {
-            var sorted = _logic.Sort_price();
-
-            Grid.DataSource = null;
-            Grid.DataSource = sorted
-                .Select(p => new
-                {
-                    p.Id,
-                    Название = p.Name,
-                    Цена = p.Price,
-                    ПП = p.Type ? "Да" : "Нет",
-                    Размер = p.Size
-                })
-                .ToList();
-
         }
+
+        private void Grid_CellContentClick(
+            object sender,
+            DataGridViewCellEventArgs e)
+        {
+        }
+
+       
     }
 }

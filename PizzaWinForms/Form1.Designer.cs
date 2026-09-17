@@ -45,6 +45,10 @@
             label3 = new Label();
             textBox4 = new TextBox();
             label4 = new Label();
+            textBox5 = new TextBox();
+            textBox6 = new TextBox();
+            label5 = new Label();
+            label6 = new Label();
             ((System.ComponentModel.ISupportInitialize)Grid).BeginInit();
             SuspendLayout();
             // 
@@ -99,7 +103,7 @@
             // btnAdd
             // 
             btnAdd.Anchor = AnchorStyles.Left;
-            btnAdd.Location = new Point(12, 464);
+            btnAdd.Location = new Point(688, 294);
             btnAdd.Name = "btnAdd";
             btnAdd.Size = new Size(122, 39);
             btnAdd.TabIndex = 6;
@@ -110,7 +114,7 @@
             // BtnUpdate
             // 
             BtnUpdate.Anchor = AnchorStyles.Left;
-            BtnUpdate.Location = new Point(140, 464);
+            BtnUpdate.Location = new Point(825, 294);
             BtnUpdate.Name = "BtnUpdate";
             BtnUpdate.Size = new Size(122, 39);
             BtnUpdate.TabIndex = 7;
@@ -121,7 +125,7 @@
             // BtnDelete
             // 
             BtnDelete.Anchor = AnchorStyles.Left;
-            BtnDelete.Location = new Point(268, 464);
+            BtnDelete.Location = new Point(825, 339);
             BtnDelete.Name = "BtnDelete";
             BtnDelete.Size = new Size(122, 39);
             BtnDelete.TabIndex = 8;
@@ -132,7 +136,7 @@
             // RefreshGrid
             // 
             RefreshGrid.Anchor = AnchorStyles.Left;
-            RefreshGrid.Location = new Point(396, 464);
+            RefreshGrid.Location = new Point(688, 339);
             RefreshGrid.Name = "RefreshGrid";
             RefreshGrid.Size = new Size(122, 39);
             RefreshGrid.TabIndex = 9;
@@ -143,22 +147,22 @@
             // btnFilterBySize
             // 
             btnFilterBySize.Anchor = AnchorStyles.Left;
-            btnFilterBySize.Location = new Point(12, 509);
+            btnFilterBySize.Location = new Point(12, 446);
             btnFilterBySize.Name = "btnFilterBySize";
             btnFilterBySize.Size = new Size(250, 39);
             btnFilterBySize.TabIndex = 10;
-            btnFilterBySize.Text = "По размеру";
+            btnFilterBySize.Text = "По диапазону цены";
             btnFilterBySize.UseVisualStyleBackColor = true;
-            btnFilterBySize.Click += btnFilterBySize_Click;
+            btnFilterBySize.Click += BtnFilterByPrice_Click;
             // 
             // BtnSortByPrice
             // 
             BtnSortByPrice.Anchor = AnchorStyles.Left;
-            BtnSortByPrice.Location = new Point(268, 509);
+            BtnSortByPrice.Location = new Point(268, 446);
             BtnSortByPrice.Name = "BtnSortByPrice";
             BtnSortByPrice.Size = new Size(250, 39);
             BtnSortByPrice.TabIndex = 11;
-            BtnSortByPrice.Text = "По цене";
+            BtnSortByPrice.Text = "Статистика";
             BtnSortByPrice.UseVisualStyleBackColor = true;
             BtnSortByPrice.Click += BtnSortByPrice_Click;
             // 
@@ -222,11 +226,47 @@
             label4.TabIndex = 17;
             label4.Text = "ID";
             // 
+            // textBox5
+            // 
+            textBox5.Location = new Point(156, 505);
+            textBox5.Name = "textBox5";
+            textBox5.Size = new Size(125, 27);
+            textBox5.TabIndex = 18;
+            // 
+            // textBox6
+            // 
+            textBox6.Location = new Point(156, 544);
+            textBox6.Name = "textBox6";
+            textBox6.Size = new Size(125, 27);
+            textBox6.TabIndex = 19;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(3, 505);
+            label5.Name = "label5";
+            label5.Size = new Size(150, 20);
+            label5.TabIndex = 20;
+            label5.Text = "Минимальная цена:";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(3, 547);
+            label6.Name = "label6";
+            label6.Size = new Size(154, 20);
+            label6.TabIndex = 21;
+            label6.Text = "Максимальная цена:";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(969, 609);
+            Controls.Add(label6);
+            Controls.Add(label5);
+            Controls.Add(textBox6);
+            Controls.Add(textBox5);
             Controls.Add(label4);
             Controls.Add(textBox4);
             Controls.Add(label3);
@@ -269,5 +309,9 @@
         private Label label3;
         private TextBox textBox4;
         private Label label4;
+        private TextBox textBox5;
+        private TextBox textBox6;
+        private Label label5;
+        private Label label6;
     }
 }

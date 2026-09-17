@@ -7,57 +7,157 @@ using System.Threading.Tasks;
 
 namespace PizzaModel
 {
-  public class Logic
+    /// <summary>
+    /// Бизнес-логика работы с пиццами.
+    /// </summary>
+    public class Logic
     {
         private readonly List<Pizza> _pizzas = new List<Pizza>();
         private int _nextId = 1;
+
+        /// <summary>
+        /// Создаёт новую пиццу.
+        /// </summary>
         public Pizza Create(string name, decimal price, bool type, int size)
         {
-            var pizza = new Pizza
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Название пиццы не может быть пустым.");
+
+            if (price <= 0)
+                throw new ArgumentException("Цена должна быть больше нуля.");
+
+            if (size <= 0)
+                throw new ArgumentException("Размер должен быть больше нуля.");
+
+            Pizza pizza = new Pizza
             {
-                Id = _nextId++,
+                Id = _nextId,
                 Name = name,
                 Price = price,
                 Type = type,
                 Size = size
             };
+
+            _nextId++;
             _pizzas.Add(pizza);
+
             return pizza;
         }
+
+        /// <summary>
+        /// Находит пиццу по ID.
+        /// </summary>
         public Pizza Read(int id)
         {
+            if (id <= 0)
+                throw new ArgumentException("ID должен быть больше нуля.");
+
             return _pizzas.FirstOrDefault(p => p.Id == id);
         }
+
+        /// <summary>
+        /// Возвращает все пиццы.
+        /// </summary>
         public List<Pizza> ReadAll()
         {
             return new List<Pizza>(_pizzas);
         }
+
+        /// <summary>
+        /// Изменяет данные пиццы.
+        /// </summary>
         public bool Update(int id, string name, decimal price, bool type, int size)
         {
-            var pizza = Read(id);
-            if (pizza == null) return false;
+            if (id <= 0)
+                throw new ArgumentException("ID должен быть больше нуля.");
+
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Название пиццы не может быть пустым.");
+
+            if (price <= 0)
+                throw new ArgumentException("Цена должна быть больше нуля.");
+
+            if (size <= 0)
+                throw new ArgumentException("Размер должен быть больше нуля.");
+
+            Pizza pizza = Read(id);
+
+            if (pizza == null)
+                return false;
 
             pizza.Name = name;
             pizza.Price = price;
             pizza.Type = type;
             pizza.Size = size;
+
             return true;
         }
+
+        /// <summary>
+        /// Удаляет пиццу.
+        /// </summary>
         public bool Delete(int id)
         {
-            var pizza = Read(id);
-            if (pizza == null) return false;
+            if (id <= 0)
+                throw new ArgumentException("ID должен быть больше нуля.");
+
+            Pizza pizza = Read(id);
+
+            if (pizza == null)
+                return false;
+
             _pizzas.Remove(pizza);
+
             return true;
         }
-        public List<Pizza> Filter_size(int size)
+
+        /// <summary>
+        /// Находит пиццы в указанном диапазоне цены.
+        /// </summary>
+        public List<Pizza> FilterByPrice(decimal minPrice, decimal maxPrice)
         {
-            return _pizzas.Where(p => p.Size == size).ToList();
+            if (minPrice <= 0)
+                throw new ArgumentException("Минимальная цена должна быть больше нуля.");
+
+            if (maxPrice <= 0)
+                throw new ArgumentException("Максимальная цена должна быть больше нуля.");
+
+            if (minPrice > maxPrice)
+                throw new ArgumentException(
+                    "Минимальная цена не может быть больше максимальной.");
+
+            return _pizzas
+                .Where(p => p.Price >= minPrice && p.Price <= maxPrice)
+                .ToList();
         }
-        public List<Pizza> Sort_price()
+
+        /// <summary>
+        /// Возвращает статистику по пиццам.
+        /// </summary>
+        public string GetStatistics()
         {
-            return _pizzas.OrderBy(p => p.Price).ToList();
+            if (_pizzas.Count == 0)
+                throw new InvalidOperationException(
+                    "Нельзя получить статистику. Список пицц пуст.");
+
+            Pizza cheapest = _pizzas
+                .OrderBy(p => p.Price)
+                .First();
+
+            Pizza mostExpensive = _pizzas
+                .OrderByDescending(p => p.Price)
+                .First();
+
+            decimal averagePrice = _pizzas.Average(p => p.Price);
+
+            int ppCount = _pizzas.Count(p => p.Type);
+
+            return
+                $"Количество пицц: {_pizzas.Count}\n" +
+                $"Средняя цена: {averagePrice:F2} руб.\n" +
+                $"Самая дешёвая: {cheapest.Name} — {cheapest.Price} руб.\n" +
+                $"Самая дорогая: {mostExpensive.Name} — {mostExpensive.Price} руб.\n" +
+                $"ПП-пицц: {ppCount}";
         }
-        
     }
 }

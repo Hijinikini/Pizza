@@ -4,9 +4,6 @@ namespace Pizza
 {
     internal class Program
     {
-        /// <summary>
-        /// Запускает консольное приложение.
-        /// </summary>
         static void Main()
         {
             Logic logic = new Logic();
@@ -14,9 +11,8 @@ namespace Pizza
             while (true)
             {
                 Console.WriteLine();
-                Console.WriteLine("================================");
-                Console.WriteLine("       ПИЦЦЕРИЯ ОТ МАКСА");
-                Console.WriteLine("================================");
+                Console.WriteLine("       ПИЦЦЕРИЯ ОТ МАКСА и АРТЕМА");
+                Console.WriteLine("");
                 Console.WriteLine("1. Показать все пиццы");
                 Console.WriteLine("2. Добавить пиццу");
                 Console.WriteLine("3. Изменить пиццу");
@@ -24,7 +20,6 @@ namespace Pizza
                 Console.WriteLine("5. Поиск по диапазону цены");
                 Console.WriteLine("6. Статистика");
                 Console.WriteLine("0. Выход");
-                Console.WriteLine("================================");
                 Console.Write("Выберите действие: ");
 
                 string choice = Console.ReadLine();
@@ -80,8 +75,9 @@ namespace Pizza
         }
 
         /// <summary>
-        /// Показывает все пиццы.
+        /// 
         /// </summary>
+        /// <param name="logic"></param>
         static void ShowAll(Logic logic)
         {
             List<PizzaClass> pizzas = logic.ReadAll();
@@ -102,8 +98,9 @@ namespace Pizza
         }
 
         /// <summary>
-        /// Добавляет новую пиццу.
+        /// 
         /// </summary>
+        /// <param name="logic"></param>
         static void AddPizza(Logic logic)
         {
             Console.WriteLine("ДОБАВЛЕНИЕ ПИЦЦЫ");
@@ -126,24 +123,46 @@ namespace Pizza
             Console.WriteLine("Пицца добавлена:");
             Console.WriteLine(pizza);
         }
-
         /// <summary>
-        /// Изменяет пиццу.
+        /// 
         /// </summary>
+        /// <param name="logic"></param>
         static void UpdatePizza(Logic logic)
         {
             Console.WriteLine("ИЗМЕНЕНИЕ ПИЦЦЫ");
 
-            Console.Write("ID пиццы: ");
-            int id = ReadInt();
+            List<PizzaClass> pizzas = logic.ReadAll();
 
-            PizzaClass pizza = logic.Read(id);
-
-            if (pizza == null)
+            if (pizzas.Count == 0)
             {
-                Console.WriteLine("Пицца с таким ID не найдена.");
+                Console.WriteLine("Список пицц пуст. Изменять нечего.");
                 return;
             }
+
+            Console.WriteLine();
+            Console.WriteLine("СПИСОК ПИЦЦ:");
+
+            for (int i = 0; i < pizzas.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}. {pizzas[i]}");
+            }
+
+            Console.WriteLine();
+            Console.Write("Введите номер пиццы, которую хотите изменить: ");
+            int number = ReadInt();
+
+            if (number < 1 || number > pizzas.Count)
+            {
+                Console.WriteLine("Пицца с таким номером не найдена.");
+                return;
+            }
+
+            PizzaClass selected = pizzas[number - 1];
+
+            Console.WriteLine();
+            Console.WriteLine("Вы выбрали:");
+            Console.WriteLine(selected);
+            Console.WriteLine();
 
             Console.Write("Новое название: ");
             string name = Console.ReadLine();
@@ -157,14 +176,14 @@ namespace Pizza
             Console.Write("Новый размер: ");
             int size = ReadInt();
 
-            logic.Update(id, name, price, type, size);
+            logic.Update(selected.Id, name, price, type, size);
 
             Console.WriteLine("Пицца изменена.");
         }
-
         /// <summary>
-        /// Удаляет пиццу.
+        /// 
         /// </summary>
+        /// <param name="logic"></param>
         static void DeletePizza(Logic logic)
         {
             Console.WriteLine("УДАЛЕНИЕ ПИЦЦЫ");
@@ -179,8 +198,9 @@ namespace Pizza
         }
 
         /// <summary>
-        /// Ищет пиццы по диапазону цены.
+        /// 
         /// </summary>
+        /// <param name="logic"></param>
         static void FilterByPrice(Logic logic)
         {
             Console.WriteLine("ПОИСК ПО ЦЕНЕ");
@@ -211,8 +231,9 @@ namespace Pizza
         }
 
         /// <summary>
-        /// Считывает целое число.
+        /// 
         /// </summary>
+        /// <returns></returns>
         static int ReadInt()
         {
             while (true)
@@ -227,8 +248,9 @@ namespace Pizza
         }
 
         /// <summary>
-        /// Считывает цену.
+        /// 
         /// </summary>
+        /// <returns></returns>
         static decimal ReadDecimal()
         {
             while (true)
@@ -243,8 +265,9 @@ namespace Pizza
         }
 
         /// <summary>
-        /// Считывает ответ да или нет.
+        /// 
         /// </summary>
+        /// <returns></returns>
         static bool ReadBool()
         {
             while (true)

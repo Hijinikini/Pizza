@@ -7,17 +7,15 @@ using System.Threading.Tasks;
 namespace PizzaModel
 {
     /// <summary>
-    /// Пицца.
+    /// 
     /// </summary>
     public class Pizza
     {
-        /// <summary>
-        /// ID пиццы.
-        /// </summary>
+     
         public int Id { get; set; }
 
         /// <summary>
-        /// Название пиццы.
+        /// 
         /// </summary>
         public string Name { get; set; }
 
@@ -37,8 +35,9 @@ namespace PizzaModel
         public int Size { get; set; }
 
         /// <summary>
-        /// Выводит информацию о пицце.
+        /// 
         /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             string type = Type ? "ПП" : "Обычная";

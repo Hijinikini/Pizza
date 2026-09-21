@@ -14,8 +14,10 @@ namespace PizzaWinForms
         }
 
         /// <summary>
-        /// Добавляет пиццу.
+        /// 
         /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnAdd_Click_Click(object sender, EventArgs e)
         {
             try
@@ -51,11 +53,10 @@ namespace PizzaWinForms
         }
 
         /// <summary>
-        /// Изменяет пиццу.
+        /// 
         /// </summary>
-        /// <summary>
-        /// Изменяет выбранную пиццу.
-        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnUpdate_Click(object sender, EventArgs e)
         {
             try
@@ -109,10 +110,11 @@ namespace PizzaWinForms
                 MessageBox.Show("Ошибка: " + ex.Message);
             }
         }
-
         /// <summary>
-        /// Удаляет выбранную пиццу.
+        /// 
         /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnDelete_Click(object sender, EventArgs e)
         {
             try
@@ -154,16 +156,20 @@ namespace PizzaWinForms
         }
 
         /// <summary>
-        /// Обновляет таблицу.
+        /// 
         /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void RefreshGrid_Click(object sender, EventArgs e)
         {
             RefreshGrid2();
         }
 
         /// <summary>
-        /// Ищет пиццы по диапазону цены.
+        /// 
         /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnFilterByPrice_Click(object sender, EventArgs e)
         {
             try
@@ -209,9 +215,11 @@ namespace PizzaWinForms
         }
 
         /// <summary>
-        /// Показывает статистику.
+        /// 
         /// </summary>
-        private void BtnSortByPrice_Click(object sender, EventArgs e)
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnStatistics_Click(object sender, EventArgs e)
         {
             try
             {
@@ -231,7 +239,7 @@ namespace PizzaWinForms
         }
 
         /// <summary>
-        /// Обновляет таблицу с пиццами.
+        /// 
         /// </summary>
         private void RefreshGrid2()
         {
@@ -250,31 +258,36 @@ namespace PizzaWinForms
         }
 
         /// <summary>
-        /// Очищает поля ввода.
+        /// 
         /// </summary>
         private void ClearFields()
         {
             textBox1.Text = "";
             textBox2.Text = "";
             textBox3.Text = "";
-            textBox4.Text = "";
             checkBox1.Checked = false;
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+
+
+        
+
+        private void Grid_SelectionChanged(object sender, DataGridViewCellEventArgs e)
         {
+            if (Grid.CurrentRow == null)
+                return;
+
+            // Защита от строки "новой записи" (если AllowUserToAddRows = true)
+            if (Grid.CurrentRow.IsNewRow)
+                return;
+
+            textBox1.Text = Grid.CurrentRow.Cells["Название"].Value?.ToString() ?? "";
+            textBox2.Text = Grid.CurrentRow.Cells["Цена"].Value?.ToString() ?? "";
+            textBox3.Text = Grid.CurrentRow.Cells["Размер"].Value?.ToString() ?? "";
+
+            string pp = Grid.CurrentRow.Cells["ПП"].Value?.ToString() ?? "Нет";
+            checkBox1.Checked = pp == "Да";
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-        }
-
-        private void Grid_CellContentClick(
-            object sender,
-            DataGridViewCellEventArgs e)
-        {
-        }
-
-       
     }
-}
+    }

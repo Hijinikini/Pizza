@@ -43,8 +43,6 @@
             label1 = new Label();
             label2 = new Label();
             label3 = new Label();
-            textBox4 = new TextBox();
-            label4 = new Label();
             textBox5 = new TextBox();
             textBox6 = new TextBox();
             label5 = new Label();
@@ -103,7 +101,7 @@
             // btnAdd
             // 
             btnAdd.Anchor = AnchorStyles.Left;
-            btnAdd.Location = new Point(688, 294);
+            btnAdd.Location = new Point(687, 234);
             btnAdd.Name = "btnAdd";
             btnAdd.Size = new Size(122, 39);
             btnAdd.TabIndex = 6;
@@ -114,7 +112,7 @@
             // BtnUpdate
             // 
             BtnUpdate.Anchor = AnchorStyles.Left;
-            BtnUpdate.Location = new Point(825, 294);
+            BtnUpdate.Location = new Point(824, 234);
             BtnUpdate.Name = "BtnUpdate";
             BtnUpdate.Size = new Size(122, 39);
             BtnUpdate.TabIndex = 7;
@@ -125,7 +123,7 @@
             // BtnDelete
             // 
             BtnDelete.Anchor = AnchorStyles.Left;
-            BtnDelete.Location = new Point(825, 339);
+            BtnDelete.Location = new Point(824, 279);
             BtnDelete.Name = "BtnDelete";
             BtnDelete.Size = new Size(122, 39);
             BtnDelete.TabIndex = 8;
@@ -136,7 +134,7 @@
             // RefreshGrid
             // 
             RefreshGrid.Anchor = AnchorStyles.Left;
-            RefreshGrid.Location = new Point(688, 339);
+            RefreshGrid.Location = new Point(687, 279);
             RefreshGrid.Name = "RefreshGrid";
             RefreshGrid.Size = new Size(122, 39);
             RefreshGrid.TabIndex = 9;
@@ -164,7 +162,7 @@
             BtnSortByPrice.TabIndex = 11;
             BtnSortByPrice.Text = "Статистика";
             BtnSortByPrice.UseVisualStyleBackColor = true;
-            BtnSortByPrice.Click += BtnSortByPrice_Click;
+            BtnSortByPrice.Click += BtnStatistics_Click;
             // 
             // Grid
             // 
@@ -175,7 +173,7 @@
             Grid.RowHeadersWidth = 51;
             Grid.Size = new Size(670, 405);
             Grid.TabIndex = 12;
-            Grid.CellContentClick += Grid_CellContentClick;
+            Grid.CellContentClick += Grid_SelectionChanged;
             // 
             // label1
             // 
@@ -206,25 +204,6 @@
             label3.Size = new Size(45, 20);
             label3.TabIndex = 15;
             label3.Text = "Цена";
-            // 
-            // textBox4
-            // 
-            textBox4.Anchor = AnchorStyles.Left;
-            textBox4.ForeColor = SystemColors.ActiveCaptionText;
-            textBox4.Location = new Point(704, 252);
-            textBox4.Name = "textBox4";
-            textBox4.Size = new Size(63, 27);
-            textBox4.TabIndex = 16;
-            // 
-            // label4
-            // 
-            label4.Anchor = AnchorStyles.Left;
-            label4.AutoSize = true;
-            label4.Location = new Point(707, 229);
-            label4.Name = "label4";
-            label4.Size = new Size(24, 20);
-            label4.TabIndex = 17;
-            label4.Text = "ID";
             // 
             // textBox5
             // 
@@ -267,8 +246,6 @@
             Controls.Add(label5);
             Controls.Add(textBox6);
             Controls.Add(textBox5);
-            Controls.Add(label4);
-            Controls.Add(textBox4);
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(label1);
@@ -307,8 +284,6 @@
         private Label label1;
         private Label label2;
         private Label label3;
-        private TextBox textBox4;
-        private Label label4;
         private TextBox textBox5;
         private TextBox textBox6;
         private Label label5;

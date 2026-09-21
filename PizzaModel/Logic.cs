@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace PizzaModel
 {
     /// <summary>
-    /// Бизнес-логика работы с пиццами.
+    /// 
     /// </summary>
     public class Logic
     {
@@ -16,8 +16,14 @@ namespace PizzaModel
         private int _nextId = 1;
 
         /// <summary>
-        /// Создаёт новую пиццу.
+        /// 
         /// </summary>
+        /// <param name="name"></param>
+        /// <param name="price"></param>
+        /// <param name="type"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public Pizza Create(string name, decimal price, bool type, int size)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -43,10 +49,12 @@ namespace PizzaModel
 
             return pizza;
         }
-
         /// <summary>
-        /// Находит пиццу по ID.
+        /// 
         /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public Pizza Read(int id)
         {
             if (id <= 0)
@@ -55,17 +63,23 @@ namespace PizzaModel
             return _pizzas.FirstOrDefault(p => p.Id == id);
         }
 
-        /// <summary>
-        /// Возвращает все пиццы.
-        /// </summary>
+    
         public List<Pizza> ReadAll()
         {
             return new List<Pizza>(_pizzas);
         }
-
         /// <summary>
         /// Изменяет данные пиццы.
         /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="price"></param>
+        /// <param name="type"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        /// 
+     
         public bool Update(int id, string name, decimal price, bool type, int size)
         {
             if (id <= 0)
@@ -94,8 +108,14 @@ namespace PizzaModel
         }
 
         /// <summary>
-        /// Удаляет пиццу.
+        /// 
         /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+
+
+        
         public bool Delete(int id)
         {
             if (id <= 0)
@@ -112,8 +132,13 @@ namespace PizzaModel
         }
 
         /// <summary>
-        /// Находит пиццы в указанном диапазоне цены.
+        /// 
+        ///
         /// </summary>
+        /// <param name="minPrice"></param>
+        /// <param name="maxPrice"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public List<Pizza> FilterByPrice(decimal minPrice, decimal maxPrice)
         {
             if (minPrice <= 0)
@@ -132,8 +157,10 @@ namespace PizzaModel
         }
 
         /// <summary>
-        /// Возвращает статистику по пиццам.
+        /// 
         /// </summary>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public string GetStatistics()
         {
             if (_pizzas.Count == 0)

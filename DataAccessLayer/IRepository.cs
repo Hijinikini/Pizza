@@ -2,6 +2,10 @@
 
 namespace DataAccessLayer
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public interface IRepository<T> where T : class, IDomainObject
     {
         void Add(T entity);

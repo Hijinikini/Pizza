@@ -1,29 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using DataAccessLayer;
 
 namespace PizzaModel
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public class Logic
     {
-        private readonly List<Pizza> _pizzas = new List<Pizza>();
-        private int _nextId = 1;
+        private readonly IRepository<Pizza> _repository;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="price"></param>
-        /// <param name="type"></param>
-        /// <param name="size"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
+        public Logic()
+        {
+            _repository = new EntityRepository<Pizza>();
+        }
+
         public Pizza Create(string name, decimal price, bool type, int size)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -37,49 +27,30 @@ namespace PizzaModel
 
             Pizza pizza = new Pizza
             {
-                Id = _nextId,
                 Name = name,
                 Price = price,
                 Type = type,
                 Size = size
             };
 
-            _nextId++;
-            _pizzas.Add(pizza);
+            _repository.Add(pizza);
 
             return pizza;
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
+
         public Pizza Read(int id)
         {
             if (id <= 0)
                 throw new ArgumentException("ID должен быть больше нуля.");
 
-            return _pizzas.FirstOrDefault(p => p.Id == id);
+            return _repository.ReadById(id);
         }
 
-    
         public List<Pizza> ReadAll()
         {
-            return new List<Pizza>(_pizzas);
+            return _repository.ReadAll();
         }
-        /// <summary>
-        /// Изменяет данные пиццы.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="name"></param>
-        /// <param name="price"></param>
-        /// <param name="type"></param>
-        /// <param name="size"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
-        /// 
-     
+
         public bool Update(int id, string name, decimal price, bool type, int size)
         {
             if (id <= 0)
@@ -104,18 +75,11 @@ namespace PizzaModel
             pizza.Type = type;
             pizza.Size = size;
 
+            _repository.Update(pizza);
+
             return true;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
-
-
-        
         public bool Delete(int id)
         {
             if (id <= 0)
@@ -126,61 +90,52 @@ namespace PizzaModel
             if (pizza == null)
                 return false;
 
-            _pizzas.Remove(pizza);
+            _repository.Delete(id);
 
             return true;
         }
 
-        /// <summary>
-        /// 
-        ///
-        /// </summary>
-        /// <param name="minPrice"></param>
-        /// <param name="maxPrice"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
         public List<Pizza> FilterByPrice(decimal minPrice, decimal maxPrice)
         {
             if (minPrice <= 0)
-                throw new ArgumentException("Минимальная цена должна быть больше нуля.");
+                throw new ArgumentException(
+                    "Минимальная цена должна быть больше нуля.");
 
             if (maxPrice <= 0)
-                throw new ArgumentException("Максимальная цена должна быть больше нуля.");
+                throw new ArgumentException(
+                    "Максимальная цена должна быть больше нуля.");
 
             if (minPrice > maxPrice)
                 throw new ArgumentException(
                     "Минимальная цена не может быть больше максимальной.");
 
-            return _pizzas
+            return _repository.ReadAll()
                 .Where(p => p.Price >= minPrice && p.Price <= maxPrice)
                 .ToList();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="InvalidOperationException"></exception>
         public string GetStatistics()
         {
-            if (_pizzas.Count == 0)
+            List<Pizza> pizzas = _repository.ReadAll();
+
+            if (pizzas.Count == 0)
                 throw new InvalidOperationException(
                     "Нельзя получить статистику. Список пицц пуст.");
 
-            Pizza cheapest = _pizzas
+            Pizza cheapest = pizzas
                 .OrderBy(p => p.Price)
                 .First();
 
-            Pizza mostExpensive = _pizzas
+            Pizza mostExpensive = pizzas
                 .OrderByDescending(p => p.Price)
                 .First();
 
-            decimal averagePrice = _pizzas.Average(p => p.Price);
+            decimal averagePrice = pizzas.Average(p => p.Price);
 
-            int ppCount = _pizzas.Count(p => p.Type);
+            int ppCount = pizzas.Count(p => p.Type);
 
             return
-                $"Количество пицц: {_pizzas.Count}\n" +
+                $"Количество пицц: {pizzas.Count}\n" +
                 $"Средняя цена: {averagePrice:F2} руб.\n" +
                 $"Самая дешёвая: {cheapest.Name} — {cheapest.Price} руб.\n" +
                 $"Самая дорогая: {mostExpensive.Name} — {mostExpensive.Price} руб.\n" +

@@ -1,12 +1,23 @@
 ﻿using PizzaModel;
+using DataAccessLayer;
+using PizzaLogic;
 using PizzaClass = PizzaModel.Pizza;
+
 namespace Pizza
 {
+    /// <summary>
+    /// Консольный интерфейс приложения "Пиццерия".
+    /// </summary>
     internal class Program
     {
+        /// <summary>
+        /// Главный метод. Показывает меню и обрабатывает выбор пользователя.
+        /// </summary>
         static void Main()
         {
-            Logic logic = new Logic();
+            Logic logic = new Logic(
+                new EntityRepository<PizzaClass>(),
+                new EntityRepository<SizeDiscount>());
 
             while (true)
             {
@@ -19,6 +30,7 @@ namespace Pizza
                 Console.WriteLine("4. Удалить пиццу");
                 Console.WriteLine("5. Поиск по диапазону цены");
                 Console.WriteLine("6. Статистика");
+                Console.WriteLine("7. Управление скидками по размерам");
                 Console.WriteLine("0. Выход");
                 Console.Write("Выберите действие: ");
 
@@ -53,6 +65,10 @@ namespace Pizza
                             Console.WriteLine(logic.GetStatistics());
                             break;
 
+                        case "7":
+                            ManageDiscounts(logic);
+                            break;
+
                         case "0":
                             return;
 
@@ -75,9 +91,8 @@ namespace Pizza
         }
 
         /// <summary>
-        /// 
+        /// Показывает список всех пицц.
         /// </summary>
-        /// <param name="logic"></param>
         static void ShowAll(Logic logic)
         {
             List<PizzaClass> pizzas = logic.ReadAll();
@@ -98,9 +113,8 @@ namespace Pizza
         }
 
         /// <summary>
-        /// 
+        /// Запрашивает данные и добавляет новую пиццу.
         /// </summary>
-        /// <param name="logic"></param>
         static void AddPizza(Logic logic)
         {
             Console.WriteLine("ДОБАВЛЕНИЕ ПИЦЦЫ");
@@ -123,10 +137,10 @@ namespace Pizza
             Console.WriteLine("Пицца добавлена:");
             Console.WriteLine(pizza);
         }
+
         /// <summary>
-        /// 
+        /// Позволяет изменить данные существующей пиццы.
         /// </summary>
-        /// <param name="logic"></param>
         static void UpdatePizza(Logic logic)
         {
             Console.WriteLine("ИЗМЕНЕНИЕ ПИЦЦЫ");
@@ -180,10 +194,10 @@ namespace Pizza
 
             Console.WriteLine("Пицца изменена.");
         }
+
         /// <summary>
-        /// 
+        /// Удаляет пиццу по Id.
         /// </summary>
-        /// <param name="logic"></param>
         static void DeletePizza(Logic logic)
         {
             Console.WriteLine("УДАЛЕНИЕ ПИЦЦЫ");
@@ -198,9 +212,8 @@ namespace Pizza
         }
 
         /// <summary>
-        /// 
+        /// Ищет пиццы в заданном диапазоне цен.
         /// </summary>
-        /// <param name="logic"></param>
         static void FilterByPrice(Logic logic)
         {
             Console.WriteLine("ПОИСК ПО ЦЕНЕ");
@@ -231,9 +244,9 @@ namespace Pizza
         }
 
         /// <summary>
-        /// 
+        /// Считывает целое положительное число с консоли.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Введённое число.</returns>
         static int ReadInt()
         {
             while (true)
@@ -248,9 +261,9 @@ namespace Pizza
         }
 
         /// <summary>
-        /// 
+        /// Считывает положительное decimal с консоли.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Введённое число.</returns>
         static decimal ReadDecimal()
         {
             while (true)
@@ -265,9 +278,9 @@ namespace Pizza
         }
 
         /// <summary>
-        /// 
+        /// Считывает булево значение (д/н) с консоли.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>true для "д", false для "н".</returns>
         static bool ReadBool()
         {
             while (true)
@@ -282,6 +295,166 @@ namespace Pizza
 
                 Console.Write("Введите «д» или «н»: ");
             }
+        }
+
+        /// <summary>
+        /// Меню управления скидками по размерам.
+        /// </summary>
+        static void ManageDiscounts(Logic logic)
+        {
+            while (true)
+            {
+                Console.WriteLine();
+                Console.WriteLine("УПРАВЛЕНИЕ СКИДКАМИ ПО РАЗМЕРАМ");
+                Console.WriteLine("1. Показать скидки");
+                Console.WriteLine("2. Добавить/изменить скидку для размера");
+                Console.WriteLine("3. Удалить скидку");
+                Console.WriteLine("0. Назад");
+                Console.Write("Выберите действие: ");
+
+                string choice = Console.ReadLine();
+
+                switch (choice)
+                {
+                    case "1":
+                        ShowDiscounts(logic);
+                        break;
+
+                    case "2":
+                        SetDiscount(logic);
+                        break;
+
+                    case "3":
+                        DeleteDiscount(logic);
+                        break;
+
+                    case "0":
+                        return;
+
+                    default:
+                        Console.WriteLine("Ошибка: такого пункта нет.");
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Показывает все правила скидок.
+        /// </summary>
+        static void ShowDiscounts(Logic logic)
+        {
+            List<SizeDiscount> discounts = logic.ReadDiscounts();
+
+            Console.WriteLine();
+            Console.WriteLine("СКИДКИ ПО РАЗМЕРАМ:");
+
+            if (discounts.Count == 0)
+            {
+                Console.WriteLine("Скидки не заданы. Для всех размеров действует 0%.");
+                return;
+            }
+
+            foreach (SizeDiscount discount in discounts)
+            {
+                Console.WriteLine($"ID: {discount.Id} | {discount.Size} см | Скидка: {discount.DiscountPercent:F2}%");
+            }
+        }
+
+        /// <summary>
+        /// Добавляет или изменяет скидку для указанного размера.
+        /// </summary>
+        static void SetDiscount(Logic logic)
+        {
+            Console.WriteLine();
+            Console.WriteLine("ДОБАВЛЕНИЕ / ИЗМЕНЕНИЕ СКИДКИ");
+
+            Console.Write("Размер пиццы (см): ");
+            int size = ReadInt();
+
+            Console.Write("Скидка (%): ");
+            decimal discount = ReadPercent();
+
+            SizeDiscount result = logic.SaveSizeDiscount(size, discount);
+
+            Console.WriteLine();
+            Console.WriteLine("Правило скидки сохранено:");
+            Console.WriteLine(result);
+
+            List<PizzaClass> pizzas = logic.ReadAll()
+                .Where(p => p.Size == size)
+                .ToList();
+
+            if (pizzas.Count > 0)
+            {
+                Console.WriteLine();
+                Console.WriteLine($"Пиццы размера {size} см теперь имеют скидку {discount:F2}%:");
+
+                foreach (PizzaClass pizza in pizzas)
+                {
+                    ShowPizzaWithDiscount(logic, pizza);
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Пицц размера {size} см пока нет.");
+            }
+        }
+
+        /// <summary>
+        /// Удаляет правило скидки по Id.
+        /// </summary>
+        static void DeleteDiscount(Logic logic)
+        {
+            List<SizeDiscount> discounts = logic.ReadDiscounts();
+
+            if (discounts.Count == 0)
+            {
+                Console.WriteLine("Скидок для удаления нет.");
+                return;
+            }
+
+            ShowDiscounts(logic);
+
+            Console.WriteLine();
+            Console.Write("Введите ID правила скидки: ");
+            int id = ReadInt();
+
+            if (logic.DeleteSizeDiscount(id))
+                Console.WriteLine("Правило скидки удалено. Для этого размера теперь действует скидка 0%.");
+            else
+                Console.WriteLine("Правило скидки с таким ID не найдено.");
+        }
+
+        /// <summary>
+        /// Считывает процент (0–100) с консоли.
+        /// </summary>
+        /// <returns>Введённый процент.</returns>
+        static decimal ReadPercent()
+        {
+            while (true)
+            {
+                string input = Console.ReadLine();
+
+                if (decimal.TryParse(input, out decimal value) && value >= 0 && value <= 100)
+                    return value;
+
+                Console.Write("Введите процент от 0 до 100: ");
+            }
+        }
+
+        /// <summary>
+        /// Показывает пиццу с информацией о скидке.
+        /// </summary>
+        static void ShowPizzaWithDiscount(Logic logic, PizzaClass pizza)
+        {
+            decimal discount = logic.GetDiscountPercent(pizza.Size);
+            decimal discountedPrice = logic.GetDiscountedPrice(pizza);
+
+            Console.WriteLine(
+                $"[{pizza.Id}] {pizza.Name} | Размер: {pizza.Size} см | " +
+                $"Цена: {pizza.Price:F2} руб. | Скидка: {discount:F2}% | " +
+                $"Цена со скидкой: {discountedPrice:F2} руб. | " +
+                $"Тип: {(pizza.Type ? "ПП" : "Обычная")}");
         }
     }
 }

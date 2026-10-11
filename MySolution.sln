@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PizzaWinForms", "PizzaWinFo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccessLayer", "DataAccessLayer\DataAccessLayer.csproj", "{70FB26C9-F8D5-4AA6-A6B8-F1F8798BABFE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PizzaLogic", "PizzaLogic\PizzaLogic.csproj", "{78CC3081-A5AD-4F66-8BC5-20F833B6B9A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{70FB26C9-F8D5-4AA6-A6B8-F1F8798BABFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70FB26C9-F8D5-4AA6-A6B8-F1F8798BABFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70FB26C9-F8D5-4AA6-A6B8-F1F8798BABFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78CC3081-A5AD-4F66-8BC5-20F833B6B9A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78CC3081-A5AD-4F66-8BC5-20F833B6B9A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78CC3081-A5AD-4F66-8BC5-20F833B6B9A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78CC3081-A5AD-4F66-8BC5-20F833B6B9A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

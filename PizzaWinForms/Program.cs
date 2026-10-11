@@ -2,9 +2,6 @@ namespace PizzaWinForms
 {
     internal static class Program
     {
-        /// <summary>
-        /// Главный метод программы.
-        /// </summary>
         [STAThread]
         static void Main()
         {

@@ -1,4 +1,6 @@
 ﻿using PizzaModel;
+using PizzaLogic;
+using DataAccessLayer;
 
 
 
@@ -6,11 +8,15 @@ namespace PizzaWinForms
 {
     public partial class Form1 : Form
     {
-        private readonly Logic _logic = new Logic();
+        private readonly Logic _logic = new Logic(
+            new DapperRepository<Pizza>(),
+            new EntityRepository<SizeDiscount>());
 
         public Form1()
         {
             InitializeComponent();
+            RefreshGrid2();
+            RefreshDiscountGrid();
         }
 
         /// <summary>
@@ -186,8 +192,7 @@ namespace PizzaWinForms
                     return;
                 }
 
-                List<Pizza> pizzas =
-                    _logic.FilterByPrice(minPrice, maxPrice);
+                List<Pizza> pizzas = _logic.FilterByPrice(minPrice, maxPrice);
 
                 if (pizzas.Count == 0)
                 {
@@ -196,17 +201,7 @@ namespace PizzaWinForms
                 }
 
                 Grid.DataSource = null;
-
-                Grid.DataSource = pizzas
-                    .Select(p => new
-                    {
-                        p.Id,
-                        Название = p.Name,
-                        Цена = p.Price,
-                        ПП = p.Type ? "Да" : "Нет",
-                        Размер = p.Size
-                    })
-                    .ToList();
+                Grid.DataSource = BuildPizzaRows(pizzas);
             }
             catch (Exception ex)
             {
@@ -244,17 +239,20 @@ namespace PizzaWinForms
         private void RefreshGrid2()
         {
             Grid.DataSource = null;
+            Grid.DataSource = BuildPizzaRows(_logic.ReadAll());
+        }
 
-            Grid.DataSource = _logic.ReadAll()
-                .Select(p => new
-                {
-                    p.Id,
-                    Название = p.Name,
-                    Цена = p.Price,
-                    ПП = p.Type ? "Да" : "Нет",
-                    Размер = p.Size
-                })
-                .ToList();
+        private List<PizzaDisplay> BuildPizzaRows(List<Pizza> pizzas)
+        {
+            return pizzas.Select(p => new PizzaDisplay
+            {
+                Id = p.Id,
+                Название = p.Name,
+                Цена = p.Price,
+                ЦенаСоСкидкой = _logic.GetDiscountedPrice(p),
+                ПП = p.Type ? "Да" : "Нет",
+                Размер = p.Size
+            }).ToList();
         }
 
         /// <summary>
@@ -270,7 +268,7 @@ namespace PizzaWinForms
 
 
 
-        
+
 
         private void Grid_SelectionChanged(object sender, DataGridViewCellEventArgs e)
         {
@@ -289,5 +287,81 @@ namespace PizzaWinForms
             checkBox1.Checked = pp == "Да";
         }
 
+        private void RefreshDiscountGrid()
+        {
+            DiscountGrid.DataSource = null;
+            DiscountGrid.DataSource = _logic.ReadDiscounts()
+                .Select(d => new
+                {
+                    d.Id,
+                    Размер = d.Size,
+                    Скидка = d.DiscountPercent
+                }).ToList();
+        }
+
+        private void SaveDiscountButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!int.TryParse(DiscountSizeTextBox.Text, out int size))
+                {
+                    MessageBox.Show("Размер введён неправильно.");
+                    return;
+                }
+                if (!decimal.TryParse(DiscountPercentTextBox.Text, out decimal discount))
+                {
+                    MessageBox.Show("Размер скидки введён неправильно.");
+                    return;
+                }
+
+                _logic.SaveSizeDiscount(size, discount);
+                RefreshDiscountGrid();
+                RefreshGrid2();
+                ClearDiscountFields();
+                MessageBox.Show($"Для размера {size} см установлена скидка {discount:0.##}%.");
+            }
+            catch (Exception ex) { MessageBox.Show("Ошибка: " + ex.Message); }
+        }
+
+        private void DeleteDiscountButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (DiscountGrid.CurrentRow == null) { MessageBox.Show("Выберите правило скидки."); return; }
+                if (!int.TryParse(DiscountGrid.CurrentRow.Cells["Id"].Value?.ToString(), out int id)) return;
+
+                if (_logic.DeleteSizeDiscount(id))
+                {
+                    RefreshDiscountGrid();
+                    RefreshGrid2();
+                    ClearDiscountFields();
+                    MessageBox.Show("Правило скидки удалено.");
+                }
+            }
+            catch (Exception ex) { MessageBox.Show("Ошибка: " + ex.Message); }
+        }
+
+        private void DiscountGrid_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (DiscountGrid.CurrentRow == null || DiscountGrid.CurrentRow.IsNewRow) return;
+            DiscountSizeTextBox.Text = DiscountGrid.CurrentRow.Cells["Размер"].Value?.ToString() ?? "";
+            DiscountPercentTextBox.Text = DiscountGrid.CurrentRow.Cells["Скидка"].Value?.ToString() ?? "";
+        }
+
+        private void ClearDiscountFields()
+        {
+            DiscountSizeTextBox.Text = "";
+            DiscountPercentTextBox.Text = "";
+        }
     }
+    public class PizzaDisplay
+    {
+        public int Id { get; set; }
+        public string Название { get; set; }
+        public decimal Цена { get; set; }
+        public decimal ЦенаСоСкидкой { get; set; }
+        public string ПП { get; set; }
+        public int Размер { get; set; }
     }
+}
+

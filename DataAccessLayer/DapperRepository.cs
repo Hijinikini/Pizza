@@ -2,22 +2,23 @@
 using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 using System.Linq;
+using PizzaModel;
 
 namespace DataAccessLayer
 {
     /// <summary>
-    /// 
+    /// Репозиторий на Dapper. Работает с БД через SQL-запросы.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">Тип сущности.</typeparam>
     public class DapperRepository<T> : IRepository<T>
         where T : class, IDomainObject
     {
         private readonly string _connectionString =
             @"Server=(localdb)\MSSQLLocalDB;Database=PizzaDB;Trusted_Connection=True;TrustServerCertificate=True;";
+
         /// <summary>
-        /// 
+        /// Добавляет запись в таблицу Pizza.
         /// </summary>
-        /// <param name="entity"></param>
         public void Add(T entity)
         {
             using (var connection = new SqlConnection(_connectionString))
@@ -28,10 +29,10 @@ namespace DataAccessLayer
                     entity);
             }
         }
+
         /// <summary>
-        /// 
+        /// Удаляет запись по Id.
         /// </summary>
-        /// <param name="id"></param>
         public void Delete(int id)
         {
             using (var connection = new SqlConnection(_connectionString))
@@ -41,10 +42,10 @@ namespace DataAccessLayer
                     new { Id = id });
             }
         }
+
         /// <summary>
-        /// 
+        /// Возвращает все записи из таблицы Pizza.
         /// </summary>
-        /// <returns></returns>
         public List<T> ReadAll()
         {
             using (var connection = new SqlConnection(_connectionString))
@@ -53,11 +54,10 @@ namespace DataAccessLayer
                     "SELECT * FROM Pizza").ToList();
             }
         }
+
         /// <summary>
-        /// 
+        /// Возвращает одну запись по Id.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         public T ReadById(int id)
         {
             using (var connection = new SqlConnection(_connectionString))
@@ -67,10 +67,10 @@ namespace DataAccessLayer
                     new { Id = id });
             }
         }
+
         /// <summary>
-        /// 
+        /// Обновляет запись в таблице Pizza.
         /// </summary>
-        /// <param name="entity"></param>
         public void Update(T entity)
         {
             using (var connection = new SqlConnection(_connectionString))

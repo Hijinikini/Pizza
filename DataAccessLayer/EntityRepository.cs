@@ -15,13 +15,15 @@ namespace DataAccessLayer
         private readonly PizzaDbContext _context;
 
         /// <summary>
-        /// Создаёт контекст БД и гарантирует, что БД существует.
+        /// Создаёт репозиторий с указанным контекстом.
         /// </summary>
-        public EntityRepository()
+        public EntityRepository(PizzaDbContext context)
         {
-            _context = new PizzaDbContext();
+            _context = context;
+        }
 
-            _context.Set<T>();
+        public EntityRepository() : this(new PizzaDbContext())
+        {
             _context.Database.EnsureCreated();
         }
 

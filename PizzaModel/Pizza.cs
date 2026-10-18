@@ -1,29 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PizzaModel
+﻿namespace PizzaModel
 {
     /// <summary>
-    /// Доменная сущность "Пицца". Содержит Id, Name, Price, Type, Size.
-    /// Id — уникальный идентификатор. Name — название. Price — цена в рублях.
-    /// Type — ПП или обычная. Size — размер в см.
+    /// Сущность "Пицца".
     /// </summary>
     public class Pizza : IDomainObject
     {
-     
+        /// <summary>
+        /// Id пиццы.
+        /// </summary>
         public int Id { get; set; }
+
+        /// <summary>
+        /// Название.
+        /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Цена в рублях.
+        /// </summary>
         public decimal Price { get; set; }
+
+        /// <summary>
+        /// ПП или обычная.
+        /// </summary>
         public bool Type { get; set; }
+
+        /// <summary>
+        /// Размер в см.
+        /// </summary>
         public int Size { get; set; }
 
         /// <summary>
-        /// Возвращает строковое представление пиццы.
+        /// Вывод пиццы в виде строки.
         /// </summary>
-        /// <returns>Строка с Id, названием, размером, ценой и типом.</returns>
+        /// <returns>Текст с данными пиццы.</returns>
         public override string ToString()
         {
             string type = Type ? "ПП" : "Обычная";

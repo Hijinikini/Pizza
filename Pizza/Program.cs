@@ -15,9 +15,8 @@ namespace Pizza
         /// </summary>
         static void Main()
         {
-            Logic logic = new Logic(
-                new EntityRepository<PizzaClass>(),
-                new EntityRepository<SizeDiscount>());
+            using var uow = new EntityUnitOfWork();
+            Logic logic = new Logic(uow.Pizzas, uow.Discounts);
 
             while (true)
             {

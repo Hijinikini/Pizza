@@ -1,19 +1,29 @@
 ﻿namespace PizzaModel
 {
     /// <summary>
-    /// Правило скидки для определённого размера пиццы.
-    /// Содержит Id, Size (размер в см) и DiscountPercent (процент скидки).
+    /// Скидка на размер пиццы.
     /// </summary>
     public class SizeDiscount : IDomainObject
     {
+        /// <summary>
+        /// Id скидки.
+        /// </summary>
         public int Id { get; set; }
+
+        /// <summary>
+        /// Размер в см.
+        /// </summary>
         public int Size { get; set; }
+
+        /// <summary>
+        /// Процент скидки (0-100).
+        /// </summary>
         public decimal DiscountPercent { get; set; }
 
         /// <summary>
-        /// Возвращает строковое представление правила скидки.
+        /// Вывод скидки в виде строки.
         /// </summary>
-        /// <returns>Строка вида "15 см — скидка 10%".</returns>
+        /// <returns>Текст с размером и процентом.</returns>
         public override string ToString()
         {
             return $"{Size} см — скидка {DiscountPercent:0.##}%";

@@ -8,13 +8,13 @@ namespace PizzaWinForms
 {
     public partial class Form1 : Form
     {
-        private readonly Logic _logic = new Logic(
-            new DapperRepository<Pizza>(),
-            new EntityRepository<SizeDiscount>());
+        private readonly IUnitOfWork _uow = new EntityUnitOfWork();
+        private readonly Logic _logic;
 
         public Form1()
         {
             InitializeComponent();
+            _logic = new Logic(_uow.Pizzas, _uow.Discounts);
             RefreshGrid2();
             RefreshDiscountGrid();
         }

@@ -8,6 +8,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\PizzaModel\PizzaModel.csproj" />
+		<ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj" />
 	</ItemGroup>
 
 </Project>

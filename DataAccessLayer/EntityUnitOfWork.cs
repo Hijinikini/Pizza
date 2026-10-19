@@ -4,27 +4,11 @@ using PizzaModel;
 
 namespace DataAccessLayer
 {
-    /// <summary>
-    /// Unit of Work на Entity Framework Core.
-    /// </summary>
-    public class EntityUnitOfWork : IUnitOfWork
+    public class EntityUnitOfWork : BaseUnitOfWork 
     {
         private readonly PizzaDbContext _context;
         private IDbContextTransaction _transaction;
 
-        /// <summary>
-        /// Репозиторий пицц.
-        /// </summary>
-        public IRepository<Pizza> Pizzas { get; }
-
-        /// <summary>
-        /// Репозиторий скидок.
-        /// </summary>
-        public IRepository<SizeDiscount> Discounts { get; }
-
-        /// <summary>
-        /// Создаёт Unit of Work на EF Core.
-        /// </summary>
         public EntityUnitOfWork()
         {
             _context = new PizzaDbContext();
@@ -34,18 +18,12 @@ namespace DataAccessLayer
             Discounts = new EntityRepository<SizeDiscount>(_context);
         }
 
-        /// <summary>
-        /// Начинает транзакцию.
-        /// </summary>
-        public void BeginTransaction()
+        public override void BeginTransaction()
         {
             _transaction = _context.Database.BeginTransaction();
         }
 
-        /// <summary>
-        /// Сохраняет все изменения.
-        /// </summary>
-        public void Commit()
+        public override void Commit()
         {
             _context.SaveChanges();
             _transaction?.Commit();
@@ -53,20 +31,14 @@ namespace DataAccessLayer
             _transaction = null;
         }
 
-        /// <summary>
-        /// Откатывает все изменения.
-        /// </summary>
-        public void Rollback()
+        public override void Rollback()
         {
             _transaction?.Rollback();
             _transaction?.Dispose();
             _transaction = null;
         }
 
-        /// <summary>
-        /// Освобождает ресурсы.
-        /// </summary>
-        public void Dispose()
+        public override void Dispose()
         {
             _transaction?.Dispose();
             _context?.Dispose();

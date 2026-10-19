@@ -5,67 +5,45 @@ using PizzaModel;
 
 namespace DataAccessLayer
 {
-    /// <summary>
-    /// Unit of Work для Dapper. Держит одно соединение для всех репозиториев.
-    /// </summary>
-    public class DapperUnitOfWork : IUnitOfWork
+    public class DapperUnitOfWork : BaseUnitOfWork 
     {
         private readonly IDbConnection _connection;
+        private IDbTransaction _transaction;
 
         private readonly string _connectionString =
             @"Server=(localdb)\MSSQLLocalDB;Database=PizzaDB;Trusted_Connection=True;TrustServerCertificate=True;";
 
-        /// <summary>
-        /// Репозиторий пицц.
-        /// </summary>
-        public IRepository<Pizza> Pizzas { get; private set; }
-
-        /// <summary>
-        /// Репозиторий скидок.
-        /// </summary>
-        public IRepository<SizeDiscount> Discounts { get; private set; }
-
-        /// <summary>
-        /// Открывает соединение и создаёт репозитории.
-        /// </summary>
         public DapperUnitOfWork()
         {
             _connection = new SqlConnection(_connectionString);
             _connection.Open();
 
-            Pizzas = new DapperRepository<Pizza>(_connection, null, "Pizza");
-            Discounts = new DapperRepository<SizeDiscount>(_connection, null, "SizeDiscounts");
+            Pizzas = new DapperRepository<Pizza>(_connection, "Pizza");
+            Discounts = new DapperRepository<SizeDiscount>(_connection, "SizeDiscounts");
         }
 
-        /// <summary>
-        /// Начинает транзакцию (для Dapper не используется).
-        /// </summary>
-        public void BeginTransaction()
+        public override void BeginTransaction()
         {
-            // Dapper работает без явных транзакций
+            _transaction = _connection.BeginTransaction();
         }
 
-        /// <summary>
-        /// Для Dapper не нужен — изменения сохраняются сразу.
-        /// </summary>
-        public void Commit()
+        public override void Commit()
         {
-            // Dapper сохраняет изменения сразу при Execute
+            _transaction?.Commit();
+            _transaction?.Dispose();
+            _transaction = null;
         }
 
-        /// <summary>
-        /// Откатывает изменения (для Dapper не используется).
-        /// </summary>
-        public void Rollback()
+        public override void Rollback()
         {
-            // Dapper не поддерживает откат
+            _transaction?.Rollback();
+            _transaction?.Dispose();
+            _transaction = null;
         }
 
-        /// <summary>
-        /// Закрывает соединение.
-        /// </summary>
-        public void Dispose()
+        public override void Dispose()
         {
+            _transaction?.Dispose();
             _connection?.Dispose();
         }
     }

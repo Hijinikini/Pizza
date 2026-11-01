@@ -4,17 +4,18 @@ using PizzaModel;
 namespace DataAccessLayer
 {
     /// <summary>
-    /// Единица работы (Unit of Work).
+    /// Интерфейс для Unit of Work.
+    /// Нужен, чтобы управлять транзакциями и репозиториями.
     /// </summary>
     public interface IUnitOfWork : IDisposable
     {
         /// <summary>
-        /// Репозиторий пицц.
+        /// Репозиторий для работы с пиццами.
         /// </summary>
         IRepository<Pizza> Pizzas { get; }
 
         /// <summary>
-        /// Репозиторий скидок.
+        /// Репозиторий для работы со скидками.
         /// </summary>
         IRepository<SizeDiscount> Discounts { get; }
 
@@ -24,12 +25,12 @@ namespace DataAccessLayer
         void BeginTransaction();
 
         /// <summary>
-        /// Сохранить изменения.
+        /// Сохранить изменения (зафиксировать транзакцию).
         /// </summary>
         void Commit();
 
         /// <summary>
-        /// Откатить изменения.
+        /// Отменить изменения (откатить транзакцию).
         /// </summary>
         void Rollback();
     }

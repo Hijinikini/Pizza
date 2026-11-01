@@ -12,21 +12,35 @@ namespace PizzaLogic
     /// </summary>
     public class Logic
     {
-        private readonly IRepository<Pizza> _repository;
-        private readonly IRepository<SizeDiscount> _discountRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        /// <summary>
-        /// Внедряет репозитории для пицц и скидок.
-        /// </summary>
-        public Logic(IRepository<Pizza> repository, IRepository<SizeDiscount> discountRepository)
+        public Logic(IUnitOfWork unitOfWork)
         {
-            _repository = repository;
-            _discountRepository = discountRepository;
+            _unitOfWork = unitOfWork;
+        }
+
+
+        private void ExecuteInTransaction(Action operation)
+        {
+            _unitOfWork.BeginTransaction();
+
+            try
+            {
+                operation();
+                _unitOfWork.Commit();
+            }
+            catch
+            {
+                _unitOfWork.Rollback();
+                throw;
+            }
         }
 
         /// <summary>
         /// Создаёт пиццу и сохраняет её в БД.
         /// </summary>
+        /// 
+
         public Pizza Create(string name, decimal price, bool type, int size)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -46,10 +60,11 @@ namespace PizzaLogic
                 Size = size
             };
 
-            _repository.Add(pizza);
+            ExecuteInTransaction(() => _unitOfWork.Pizzas.Add(pizza));
 
             return pizza;
         }
+
 
         /// <summary>
         /// Возвращает пиццу по Id.
@@ -59,7 +74,7 @@ namespace PizzaLogic
             if (id <= 0)
                 throw new ArgumentException("ID должен быть больше нуля.");
 
-            return _repository.ReadById(id);
+            return _unitOfWork.Pizzas.ReadById(id);
         }
 
         /// <summary>
@@ -67,12 +82,13 @@ namespace PizzaLogic
         /// </summary>
         public List<Pizza> ReadAll()
         {
-            return _repository.ReadAll();
+            return _unitOfWork.Pizzas.ReadAll();
         }
 
         /// <summary>
         /// Обновляет данные пиццы.
         /// </summary>
+
         public bool Update(int id, string name, decimal price, bool type, int size)
         {
             if (id <= 0)
@@ -97,14 +113,16 @@ namespace PizzaLogic
             pizza.Type = type;
             pizza.Size = size;
 
-            _repository.Update(pizza);
+            ExecuteInTransaction(() => _unitOfWork.Pizzas.Update(pizza));
 
             return true;
         }
 
+
         /// <summary>
         /// Удаляет пиццу по Id.
         /// </summary>
+
         public bool Delete(int id)
         {
             if (id <= 0)
@@ -115,10 +133,11 @@ namespace PizzaLogic
             if (pizza == null)
                 return false;
 
-            _repository.Delete(id);
+            ExecuteInTransaction(() => _unitOfWork.Pizzas.Delete(id));
 
             return true;
         }
+
 
         /// <summary>
         /// Ищет пиццы в заданном диапазоне цен.
@@ -137,7 +156,7 @@ namespace PizzaLogic
                 throw new ArgumentException(
                     "Минимальная цена не может быть больше максимальной.");
 
-            return _repository.ReadAll()
+            return _unitOfWork.Pizzas.ReadAll()
                 .Where(p => p.Price >= minPrice && p.Price <= maxPrice)
                 .ToList();
         }
@@ -147,7 +166,7 @@ namespace PizzaLogic
         /// </summary>
         public string GetStatistics()
         {
-            List<Pizza> pizzas = _repository.ReadAll();
+            List<Pizza> pizzas = _unitOfWork.Pizzas.ReadAll();
 
             if (pizzas.Count == 0)
                 throw new InvalidOperationException(
@@ -178,7 +197,7 @@ namespace PizzaLogic
         /// </summary>
         public List<SizeDiscount> ReadDiscounts()
         {
-            return _discountRepository.ReadAll()
+            return _unitOfWork.Discounts.ReadAll()
                 .OrderBy(x => x.Size)
                 .ToList();
         }
@@ -186,6 +205,7 @@ namespace PizzaLogic
         /// <summary>
         /// Сохраняет скидку для размера: создаёт или обновляет.
         /// </summary>
+
         public SizeDiscount SaveSizeDiscount(int size, decimal discountPercent)
         {
             if (size <= 0)
@@ -194,7 +214,7 @@ namespace PizzaLogic
             if (discountPercent < 0 || discountPercent > 100)
                 throw new ArgumentException("Скидка должна быть от 0 до 100%.");
 
-            SizeDiscount existing = _discountRepository.ReadAll()
+            SizeDiscount existing = _unitOfWork.Discounts.ReadAll()
                 .FirstOrDefault(x => x.Size == size);
 
             if (existing == null)
@@ -205,33 +225,37 @@ namespace PizzaLogic
                     DiscountPercent = discountPercent
                 };
 
-                _discountRepository.Add(existing);
+                ExecuteInTransaction(() => _unitOfWork.Discounts.Add(existing));
             }
             else
             {
                 existing.DiscountPercent = discountPercent;
-                _discountRepository.Update(existing);
+                ExecuteInTransaction(() => _unitOfWork.Discounts.Update(existing));
             }
 
             return existing;
         }
 
+
         /// <summary>
         /// Удаляет правило скидки по Id.
         /// </summary>
+
         public bool DeleteSizeDiscount(int id)
         {
             if (id <= 0)
                 throw new ArgumentException("ID должен быть больше нуля.");
 
-            SizeDiscount discount = _discountRepository.ReadById(id);
+            SizeDiscount discount = _unitOfWork.Discounts.ReadById(id);
 
             if (discount == null)
                 return false;
 
-            _discountRepository.Delete(id);
+            ExecuteInTransaction(() => _unitOfWork.Discounts.Delete(id));
+
             return true;
         }
+
 
         /// <summary>
         /// Считает процент скидки для размера. Скидка действует
@@ -242,7 +266,7 @@ namespace PizzaLogic
             if (size <= 0)
                 return 0;
 
-            var applicable = _discountRepository.ReadAll()
+            var applicable = _unitOfWork.Discounts.ReadAll()
                 .Where(x => x.Size <= size)
                 .OrderByDescending(x => x.Size)
                 .FirstOrDefault();

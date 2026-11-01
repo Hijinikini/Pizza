@@ -16,7 +16,7 @@ namespace Pizza
         static void Main()
         {
             using var uow = new EntityUnitOfWork();
-            Logic logic = new Logic(uow.Pizzas, uow.Discounts);
+            Logic logic = new Logic(uow);
 
             while (true)
             {

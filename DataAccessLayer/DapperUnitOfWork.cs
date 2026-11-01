@@ -1,11 +1,16 @@
-﻿using System;
+﻿
+using System;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using PizzaModel;
 
 namespace DataAccessLayer
 {
-    public class DapperUnitOfWork : BaseUnitOfWork 
+    /// <summary>
+    /// Unit of Work для Dapper.
+    /// Управляет общим соединением и транзакцией.
+    /// </summary>
+    public class DapperUnitOfWork : IUnitOfWork
     {
         private readonly IDbConnection _connection;
         private IDbTransaction _transaction;
@@ -13,38 +18,84 @@ namespace DataAccessLayer
         private readonly string _connectionString =
             @"Server=(localdb)\MSSQLLocalDB;Database=PizzaDB;Trusted_Connection=True;TrustServerCertificate=True;";
 
+        public IRepository<Pizza> Pizzas { get; }
+        public IRepository<SizeDiscount> Discounts { get; }
+
         public DapperUnitOfWork()
         {
             _connection = new SqlConnection(_connectionString);
             _connection.Open();
 
-            Pizzas = new DapperRepository<Pizza>(_connection, "Pizza");
-            Discounts = new DapperRepository<SizeDiscount>(_connection, "SizeDiscounts");
+            Pizzas = new DapperRepository<Pizza>(
+                _connection, "Pizza", () => _transaction);
+
+            Discounts = new DapperRepository<SizeDiscount>(
+                _connection, "SizeDiscounts", () => _transaction);
         }
 
-        public override void BeginTransaction()
+        /// <summary>
+        /// Начинает транзакцию.
+        /// </summary>
+        public void BeginTransaction()
         {
+            if (_transaction != null)
+                throw new InvalidOperationException(
+                    "Транзакция уже начата.");
+
             _transaction = _connection.BeginTransaction();
         }
 
-        public override void Commit()
+        /// <summary>
+        /// Фиксирует изменения транзакции.
+        /// </summary>
+        public void Commit()
         {
-            _transaction?.Commit();
-            _transaction?.Dispose();
-            _transaction = null;
+            if (_transaction == null)
+                return;
+
+            try
+            {
+                _transaction.Commit();
+            }
+            catch
+            {
+                _transaction.Rollback();
+                throw;
+            }
+            finally
+            {
+                _transaction.Dispose();
+                _transaction = null;
+            }
         }
 
-        public override void Rollback()
+        /// <summary>
+        /// Отменяет изменения транзакции.
+        /// </summary>
+        public void Rollback()
         {
-            _transaction?.Rollback();
-            _transaction?.Dispose();
-            _transaction = null;
+            if (_transaction == null)
+                return;
+
+            try
+            {
+                _transaction.Rollback();
+            }
+            finally
+            {
+                _transaction.Dispose();
+                _transaction = null;
+            }
         }
 
-        public override void Dispose()
+        /// <summary>
+        /// Освобождает транзакцию и соединение.
+        /// </summary>
+        public void Dispose()
         {
             _transaction?.Dispose();
-            _connection?.Dispose();
+            _transaction = null;
+            _connection.Dispose();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿
+using System.Collections.Generic;
 using System.Linq;
 using PizzaModel;
 
@@ -22,18 +23,13 @@ namespace DataAccessLayer
             _context = context;
         }
 
-        public EntityRepository() : this(new PizzaDbContext())
-        {
-            _context.Database.EnsureCreated();
-        }
-
         /// <summary>
-        /// Добавляет запись в БД.
+        /// Добавляет запись.
+        /// Сохранение выполняется через Unit of Work.
         /// </summary>
         public void Add(T entity)
         {
             _context.Set<T>().Add(entity);
-            _context.SaveChanges();
         }
 
         /// <summary>
@@ -46,12 +42,11 @@ namespace DataAccessLayer
             if (entity != null)
             {
                 _context.Set<T>().Remove(entity);
-                _context.SaveChanges();
             }
         }
 
         /// <summary>
-        /// Возвращает все записи из БД.
+        /// Возвращает все записи.
         /// </summary>
         public List<T> ReadAll()
         {
@@ -59,7 +54,7 @@ namespace DataAccessLayer
         }
 
         /// <summary>
-        /// Возвращает одну запись по Id.
+        /// Возвращает запись по Id.
         /// </summary>
         public T ReadById(int id)
         {
@@ -68,12 +63,12 @@ namespace DataAccessLayer
         }
 
         /// <summary>
-        /// Обновляет запись в БД.
+        /// Обновляет запись.
+        /// Сохранение выполняется через Unit of Work.
         /// </summary>
         public void Update(T entity)
         {
             _context.Set<T>().Update(entity);
-            _context.SaveChanges();
         }
     }
 }

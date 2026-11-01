@@ -64,6 +64,7 @@
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(183, 27);
             textBox1.TabIndex = 2;
+            textBox1.TextChanged += textBox1_TextChanged;
             // 
             // textBox2
             // 
@@ -205,7 +206,7 @@
             label5.AutoSize = true;
             label5.Location = new Point(12, 456);
             label5.Name = "label5";
-            label5.Size = new Size(138, 20);
+            label5.Size = new Size(150, 20);
             label5.TabIndex = 20;
             label5.Text = "Минимальная цена:";
             // 
@@ -214,7 +215,7 @@
             label6.AutoSize = true;
             label6.Location = new Point(300, 456);
             label6.Name = "label6";
-            label6.Size = new Size(138, 20);
+            label6.Size = new Size(154, 20);
             label6.TabIndex = 21;
             label6.Text = "Максимальная цена:";
             // 
@@ -224,7 +225,7 @@
             DiscountsTitle.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             DiscountsTitle.Location = new Point(12, 500);
             DiscountsTitle.Name = "DiscountsTitle";
-            DiscountsTitle.Size = new Size(180, 23);
+            DiscountsTitle.Size = new Size(187, 23);
             DiscountsTitle.TabIndex = 22;
             DiscountsTitle.Text = "Скидки по размерам";
             // 
@@ -243,7 +244,7 @@
             DiscountSizeLabel.AutoSize = true;
             DiscountSizeLabel.Location = new Point(535, 530);
             DiscountSizeLabel.Name = "DiscountSizeLabel";
-            DiscountSizeLabel.Size = new Size(85, 20);
+            DiscountSizeLabel.Size = new Size(92, 20);
             DiscountSizeLabel.TabIndex = 24;
             DiscountSizeLabel.Text = "Размер (см)";
             // 
@@ -259,7 +260,7 @@
             DiscountPercentLabel.AutoSize = true;
             DiscountPercentLabel.Location = new Point(725, 530);
             DiscountPercentLabel.Name = "DiscountPercentLabel";
-            DiscountPercentLabel.Size = new Size(75, 20);
+            DiscountPercentLabel.Size = new Size(83, 20);
             DiscountPercentLabel.TabIndex = 26;
             DiscountPercentLabel.Text = "Скидка (%)";
             // 

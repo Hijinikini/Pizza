@@ -8,13 +8,13 @@ namespace PizzaWinForms
 {
     public partial class Form1 : Form
     {
-        private readonly IUnitOfWork _uow = new EntityUnitOfWork();
+        private readonly IUnitOfWork _uow = new DapperUnitOfWork();
         private readonly Logic _logic;
 
         public Form1()
         {
             InitializeComponent();
-            _logic = new Logic(_uow.Pizzas, _uow.Discounts);
+            _logic = new Logic(_uow);
             RefreshGrid2();
             RefreshDiscountGrid();
         }
@@ -352,6 +352,11 @@ namespace PizzaWinForms
         {
             DiscountSizeTextBox.Text = "";
             DiscountPercentTextBox.Text = "";
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
     public class PizzaDisplay

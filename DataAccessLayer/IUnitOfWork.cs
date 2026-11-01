@@ -5,19 +5,10 @@ namespace DataAccessLayer
 {
     /// <summary>
     /// Интерфейс для Unit of Work.
-    /// Нужен, чтобы управлять транзакциями и репозиториями.
+    /// Нужен, чтобы управлять транзакциями
     /// </summary>
     public interface IUnitOfWork : IDisposable
     {
-        /// <summary>
-        /// Репозиторий для работы с пиццами.
-        /// </summary>
-        IRepository<Pizza> Pizzas { get; }
-
-        /// <summary>
-        /// Репозиторий для работы со скидками.
-        /// </summary>
-        IRepository<SizeDiscount> Discounts { get; }
 
         /// <summary>
         /// Начать транзакцию.

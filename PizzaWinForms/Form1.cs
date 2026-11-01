@@ -1,6 +1,5 @@
 ﻿using PizzaModel;
 using PizzaLogic;
-using DataAccessLayer;
 
 
 
@@ -8,19 +7,17 @@ namespace PizzaWinForms
 {
     public partial class Form1 : Form
     {
-        private readonly IUnitOfWork _uow = new DapperUnitOfWork();
         private readonly Logic _logic;
 
-        public Form1()
+        
+        public Form1(Logic logic)
         {
             InitializeComponent();
-            _logic = new Logic(_uow);
-            RefreshGrid2();
-            RefreshDiscountGrid();
+            _logic = logic;
         }
 
         /// <summary>
-        /// 
+        /// Добавить пиццу
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -59,7 +56,7 @@ namespace PizzaWinForms
         }
 
         /// <summary>
-        /// 
+        /// Изменить пиццу
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -117,7 +114,7 @@ namespace PizzaWinForms
             }
         }
         /// <summary>
-        /// 
+        /// Удалить пиццу
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -162,7 +159,7 @@ namespace PizzaWinForms
         }
 
         /// <summary>
-        /// 
+        /// Обновить таблицу
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -172,7 +169,7 @@ namespace PizzaWinForms
         }
 
         /// <summary>
-        /// 
+        /// Фильтр по цене
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -210,7 +207,7 @@ namespace PizzaWinForms
         }
 
         /// <summary>
-        /// 
+        /// Статистика
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -234,7 +231,7 @@ namespace PizzaWinForms
         }
 
         /// <summary>
-        /// 
+        /// Обновить таблицу 2
         /// </summary>
         private void RefreshGrid2()
         {
@@ -256,7 +253,7 @@ namespace PizzaWinForms
         }
 
         /// <summary>
-        /// 
+        /// очистка полей
         /// </summary>
         private void ClearFields()
         {
@@ -269,7 +266,11 @@ namespace PizzaWinForms
 
 
 
-
+        /// <summary>
+        /// Измененный выбор
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Grid_SelectionChanged(object sender, DataGridViewCellEventArgs e)
         {
             if (Grid.CurrentRow == null)
@@ -286,7 +287,9 @@ namespace PizzaWinForms
             string pp = Grid.CurrentRow.Cells["ПП"].Value?.ToString() ?? "Нет";
             checkBox1.Checked = pp == "Да";
         }
-
+        /// <summary>
+        /// Обновить таблицу скидок
+        /// </summary>
         private void RefreshDiscountGrid()
         {
             DiscountGrid.DataSource = null;
@@ -298,7 +301,11 @@ namespace PizzaWinForms
                     Скидка = d.DiscountPercent
                 }).ToList();
         }
-
+        /// <summary>
+        /// Сохранить скидку
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SaveDiscountButton_Click(object sender, EventArgs e)
         {
             try
@@ -322,7 +329,11 @@ namespace PizzaWinForms
             }
             catch (Exception ex) { MessageBox.Show("Ошибка: " + ex.Message); }
         }
-
+        /// <summary>
+        /// Удалить скидку
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DeleteDiscountButton_Click(object sender, EventArgs e)
         {
             try
@@ -340,14 +351,20 @@ namespace PizzaWinForms
             }
             catch (Exception ex) { MessageBox.Show("Ошибка: " + ex.Message); }
         }
-
+        /// <summary>
+        /// Таблица Скидок
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DiscountGrid_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (DiscountGrid.CurrentRow == null || DiscountGrid.CurrentRow.IsNewRow) return;
             DiscountSizeTextBox.Text = DiscountGrid.CurrentRow.Cells["Размер"].Value?.ToString() ?? "";
             DiscountPercentTextBox.Text = DiscountGrid.CurrentRow.Cells["Скидка"].Value?.ToString() ?? "";
         }
-
+        /// <summary>
+        /// Очистка полей для скидок
+        /// </summary>
         private void ClearDiscountFields()
         {
             DiscountSizeTextBox.Text = "";
@@ -355,6 +372,11 @@ namespace PizzaWinForms
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void DiscountPercentTextBox_TextChanged(object sender, EventArgs e)
         {
 
         }

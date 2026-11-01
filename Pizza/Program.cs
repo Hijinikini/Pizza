@@ -1,93 +1,98 @@
 ﻿using PizzaModel;
-using DataAccessLayer;
 using PizzaLogic;
 using PizzaClass = PizzaModel.Pizza;
+using Ninject;
 
 namespace Pizza
 {
     /// <summary>
-    /// Консольный интерфейс приложения "Пиццерия".
+    /// Консольный интерфейс приложения "Пиццерия"
     /// </summary>
     internal class Program
     {
         /// <summary>
-        /// Главный метод. Показывает меню и обрабатывает выбор пользователя.
+        /// Главный метод. Показывает меню и обрабатывает выбор пользователя
         /// </summary>
+
         static void Main()
         {
-            using var uow = new EntityUnitOfWork();
-            Logic logic = new Logic(uow);
-
-            while (true)
+            using (IKernel kernel =
+                new StandardKernel(new SimpleConfigModule()))
             {
-                Console.WriteLine();
-                Console.WriteLine("       ПИЦЦЕРИЯ ОТ МАКСА и АРТЕМА");
-                Console.WriteLine("");
-                Console.WriteLine("1. Показать все пиццы");
-                Console.WriteLine("2. Добавить пиццу");
-                Console.WriteLine("3. Изменить пиццу");
-                Console.WriteLine("4. Удалить пиццу");
-                Console.WriteLine("5. Поиск по диапазону цены");
-                Console.WriteLine("6. Статистика");
-                Console.WriteLine("7. Управление скидками по размерам");
-                Console.WriteLine("0. Выход");
-                Console.Write("Выберите действие: ");
+                Logic logic = kernel.Get<Logic>();
 
-                string choice = Console.ReadLine();
-
-                try
-                {
-                    switch (choice)
-                    {
-                        case "1":
-                            ShowAll(logic);
-                            break;
-
-                        case "2":
-                            AddPizza(logic);
-                            break;
-
-                        case "3":
-                            UpdatePizza(logic);
-                            break;
-
-                        case "4":
-                            DeletePizza(logic);
-                            break;
-
-                        case "5":
-                            FilterByPrice(logic);
-                            break;
-
-                        case "6":
-                            Console.WriteLine();
-                            Console.WriteLine(logic.GetStatistics());
-                            break;
-
-                        case "7":
-                            ManageDiscounts(logic);
-                            break;
-
-                        case "0":
-                            return;
-
-                        default:
-                            Console.WriteLine("Ошибка: такого пункта нет.");
-                            break;
-                    }
-                }
-                catch (Exception ex)
+                while (true)
                 {
                     Console.WriteLine();
-                    Console.WriteLine("Ошибка: " + ex.Message);
-                }
+                    Console.WriteLine("       ПИЦЦЕРИЯ ОТ МАКСА и АРТЕМА");
+                    Console.WriteLine("");
+                    Console.WriteLine("1. Показать все пиццы");
+                    Console.WriteLine("2. Добавить пиццу");
+                    Console.WriteLine("3. Изменить пиццу");
+                    Console.WriteLine("4. Удалить пиццу");
+                    Console.WriteLine("5. Поиск по диапазону цены");
+                    Console.WriteLine("6. Статистика");
+                    Console.WriteLine("7. Управление скидками по размерам");
+                    Console.WriteLine("0. Выход");
+                    Console.Write("Выберите действие: ");
 
-                Console.WriteLine();
-                Console.WriteLine("Нажмите Enter для продолжения...");
-                Console.ReadLine();
-                Console.Clear();
+                    string choice = Console.ReadLine();
+
+                    try
+                    {
+                        switch (choice)
+                        {
+                            case "1":
+                                ShowAll(logic);
+                                break;
+
+                            case "2":
+                                AddPizza(logic);
+                                break;
+
+                            case "3":
+                                UpdatePizza(logic);
+                                break;
+
+                            case "4":
+                                DeletePizza(logic);
+                                break;
+
+                            case "5":
+                                FilterByPrice(logic);
+                                break;
+
+                            case "6":
+                                Console.WriteLine();
+                                Console.WriteLine(logic.GetStatistics());
+                                break;
+
+                            case "7":
+                                ManageDiscounts(logic);
+                                break;
+
+                            case "0":
+                                return;
+
+                            default:
+                                Console.WriteLine("Ошибка: такого пункта нет.");
+                                break;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("Ошибка: " + ex.Message);
+                    }
+
+                    Console.WriteLine();
+                    Console.WriteLine("Нажмите Enter для продолжения...");
+                    Console.ReadLine();
+                    Console.Clear();
+                }
             }
         }
+
 
         /// <summary>
         /// Показывает список всех пицц.

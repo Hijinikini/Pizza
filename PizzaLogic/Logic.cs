@@ -1,23 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using PizzaModel;
+﻿using PizzaModel;
 using DataAccessLayer;
 
 namespace PizzaLogic
 {
-
     /// <summary>
-    /// Бизнес-логика приложения. Работа с пиццами и скидками.
+    /// Бизнес-логика приложения.
     /// </summary>
     public class Logic
     {
+        private readonly IRepository<Pizza> _pizzas;
+        private readonly IRepository<SizeDiscount> _discounts;
         private readonly IUnitOfWork _unitOfWork;
 
-        public Logic(IUnitOfWork unitOfWork)
+        public Logic(
+            IRepository<Pizza> pizzas,
+            IRepository<SizeDiscount> discounts,
+            IUnitOfWork unitOfWork)
         {
+            _pizzas = pizzas;
+            _discounts = discounts;
             _unitOfWork = unitOfWork;
         }
+
 
 
         private void ExecuteInTransaction(Action operation)
@@ -60,7 +64,7 @@ namespace PizzaLogic
                 Size = size
             };
 
-            ExecuteInTransaction(() => _unitOfWork.Pizzas.Add(pizza));
+            ExecuteInTransaction(() => _pizzas.Add(pizza));
 
             return pizza;
         }
@@ -74,7 +78,7 @@ namespace PizzaLogic
             if (id <= 0)
                 throw new ArgumentException("ID должен быть больше нуля.");
 
-            return _unitOfWork.Pizzas.ReadById(id);
+            return _pizzas.ReadById(id);
         }
 
         /// <summary>
@@ -82,7 +86,7 @@ namespace PizzaLogic
         /// </summary>
         public List<Pizza> ReadAll()
         {
-            return _unitOfWork.Pizzas.ReadAll();
+            return _pizzas.ReadAll();
         }
 
         /// <summary>
@@ -113,7 +117,7 @@ namespace PizzaLogic
             pizza.Type = type;
             pizza.Size = size;
 
-            ExecuteInTransaction(() => _unitOfWork.Pizzas.Update(pizza));
+            ExecuteInTransaction(() => _pizzas.Update(pizza));
 
             return true;
         }
@@ -133,7 +137,7 @@ namespace PizzaLogic
             if (pizza == null)
                 return false;
 
-            ExecuteInTransaction(() => _unitOfWork.Pizzas.Delete(id));
+            ExecuteInTransaction(() => _pizzas.Delete(id));
 
             return true;
         }
@@ -156,7 +160,7 @@ namespace PizzaLogic
                 throw new ArgumentException(
                     "Минимальная цена не может быть больше максимальной.");
 
-            return _unitOfWork.Pizzas.ReadAll()
+            return _pizzas.ReadAll()
                 .Where(p => p.Price >= minPrice && p.Price <= maxPrice)
                 .ToList();
         }
@@ -166,7 +170,7 @@ namespace PizzaLogic
         /// </summary>
         public string GetStatistics()
         {
-            List<Pizza> pizzas = _unitOfWork.Pizzas.ReadAll();
+            List<Pizza> pizzas = _pizzas.ReadAll();
 
             if (pizzas.Count == 0)
                 throw new InvalidOperationException(
@@ -197,7 +201,7 @@ namespace PizzaLogic
         /// </summary>
         public List<SizeDiscount> ReadDiscounts()
         {
-            return _unitOfWork.Discounts.ReadAll()
+            return _discounts.ReadAll()
                 .OrderBy(x => x.Size)
                 .ToList();
         }
@@ -214,7 +218,7 @@ namespace PizzaLogic
             if (discountPercent < 0 || discountPercent > 100)
                 throw new ArgumentException("Скидка должна быть от 0 до 100%.");
 
-            SizeDiscount existing = _unitOfWork.Discounts.ReadAll()
+            SizeDiscount existing = _discounts.ReadAll()
                 .FirstOrDefault(x => x.Size == size);
 
             if (existing == null)
@@ -225,12 +229,12 @@ namespace PizzaLogic
                     DiscountPercent = discountPercent
                 };
 
-                ExecuteInTransaction(() => _unitOfWork.Discounts.Add(existing));
+                ExecuteInTransaction(() => _discounts.Add(existing));
             }
             else
             {
                 existing.DiscountPercent = discountPercent;
-                ExecuteInTransaction(() => _unitOfWork.Discounts.Update(existing));
+                ExecuteInTransaction(() => _discounts.Update(existing));
             }
 
             return existing;
@@ -246,12 +250,12 @@ namespace PizzaLogic
             if (id <= 0)
                 throw new ArgumentException("ID должен быть больше нуля.");
 
-            SizeDiscount discount = _unitOfWork.Discounts.ReadById(id);
+            SizeDiscount discount = _discounts.ReadById(id);
 
             if (discount == null)
                 return false;
 
-            ExecuteInTransaction(() => _unitOfWork.Discounts.Delete(id));
+            ExecuteInTransaction(() => _discounts.Delete(id));
 
             return true;
         }
@@ -266,7 +270,7 @@ namespace PizzaLogic
             if (size <= 0)
                 return 0;
 
-            var applicable = _unitOfWork.Discounts.ReadAll()
+            var applicable = _discounts.ReadAll()
                 .Where(x => x.Size <= size)
                 .OrderByDescending(x => x.Size)
                 .FirstOrDefault();

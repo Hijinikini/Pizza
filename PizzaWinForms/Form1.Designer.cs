@@ -132,9 +132,9 @@
             // 
             // btnFilterBySize
             // 
-            btnFilterBySize.Location = new Point(12, 446);
+            btnFilterBySize.Location = new Point(687, 378);
             btnFilterBySize.Name = "btnFilterBySize";
-            btnFilterBySize.Size = new Size(250, 39);
+            btnFilterBySize.Size = new Size(259, 39);
             btnFilterBySize.TabIndex = 10;
             btnFilterBySize.Text = "По диапазону цены";
             btnFilterBySize.UseVisualStyleBackColor = true;
@@ -142,9 +142,9 @@
             // 
             // BtnSortByPrice
             // 
-            BtnSortByPrice.Location = new Point(268, 446);
+            BtnSortByPrice.Location = new Point(687, 324);
             BtnSortByPrice.Name = "BtnSortByPrice";
-            BtnSortByPrice.Size = new Size(250, 39);
+            BtnSortByPrice.Size = new Size(259, 39);
             BtnSortByPrice.TabIndex = 11;
             BtnSortByPrice.Text = "Статистика";
             BtnSortByPrice.UseVisualStyleBackColor = true;
@@ -270,6 +270,7 @@
             DiscountPercentTextBox.Name = "DiscountPercentTextBox";
             DiscountPercentTextBox.Size = new Size(170, 27);
             DiscountPercentTextBox.TabIndex = 27;
+            DiscountPercentTextBox.TextChanged += DiscountPercentTextBox_TextChanged;
             // 
             // SaveDiscountButton
             // 

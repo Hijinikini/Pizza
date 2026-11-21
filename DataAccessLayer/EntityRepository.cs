@@ -6,35 +6,38 @@ using PizzaModel;
 namespace DataAccessLayer
 {
     /// <summary>
-    /// Репозиторий на Entity Framework Core.
-    /// Работает с БД через DbContext.
+    /// Реализация универсального репозитория с использованием Entity Framework Core.
+    /// Обеспечивает выполнение CRUD-операций через DbContext.
     /// </summary>
-    /// <typeparam name="T">Тип сущности.</typeparam>
+    /// <typeparam name="T">Тип сущности, реализующей IDomainObject.</typeparam>
     public class EntityRepository<T> : IRepository<T>
         where T : class, IDomainObject
     {
         private readonly PizzaDbContext _context;
 
         /// <summary>
-        /// Создаёт репозиторий с указанным контекстом.
+        /// Создаёт репозиторий с указанным контекстом базы данных.
         /// </summary>
+        /// <param name="context">Контекст базы данных.</param>
         public EntityRepository(PizzaDbContext context)
         {
             _context = context;
         }
 
         /// <summary>
-        /// Добавляет запись.
+        /// Добавляет новую запись в контекст базы данных.
         /// Сохранение выполняется через Unit of Work.
         /// </summary>
+        /// <param name="entity">Добавляемая сущность.</param>
         public void Add(T entity)
         {
             _context.Set<T>().Add(entity);
         }
 
         /// <summary>
-        /// Удаляет запись по Id.
+        /// Удаляет запись по идентификатору.
         /// </summary>
+        /// <param name="id">Идентификатор удаляемой записи.</param>
         public void Delete(int id)
         {
             T entity = ReadById(id);
@@ -46,16 +49,19 @@ namespace DataAccessLayer
         }
 
         /// <summary>
-        /// Возвращает все записи.
+        /// Возвращает список всех записей.
         /// </summary>
+        /// <returns>Список сущностей.</returns>
         public List<T> ReadAll()
         {
             return _context.Set<T>().ToList();
         }
 
         /// <summary>
-        /// Возвращает запись по Id.
+        /// Возвращает запись по идентификатору.
         /// </summary>
+        /// <param name="id">Идентификатор искомой записи.</param>
+        /// <returns>Найденная сущность или null, если запись отсутствует.</returns>
         public T ReadById(int id)
         {
             return _context.Set<T>()
@@ -63,9 +69,10 @@ namespace DataAccessLayer
         }
 
         /// <summary>
-        /// Обновляет запись.
+        /// Обновляет запись в контексте базы данных.
         /// Сохранение выполняется через Unit of Work.
         /// </summary>
+        /// <param name="entity">Сущность с обновлёнными данными.</param>
         public void Update(T entity)
         {
             _context.Set<T>().Update(entity);

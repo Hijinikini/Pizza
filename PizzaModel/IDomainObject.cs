@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace PizzaModel
 {
     /// <summary>
@@ -12,6 +7,9 @@ namespace PizzaModel
     /// </summary>
     public interface IDomainObject
     {
+        /// <summary>
+        /// Уникальный идентификатор сущности.
+        /// </summary>
         int Id { get; set; }
     }
 }

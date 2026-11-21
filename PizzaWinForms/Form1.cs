@@ -1,29 +1,37 @@
-﻿using PizzaModel;
+﻿
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
+using PizzaModel;
 using PizzaLogic;
-using DataAccessLayer;
-
-
 
 namespace PizzaWinForms
 {
+    /// <summary>
+    /// Главная форма приложения для управления пиццами и скидками.
+    /// </summary>
     public partial class Form1 : Form
     {
-        private readonly IUnitOfWork _uow = new DapperUnitOfWork();
-        private readonly Logic _logic;
+        private readonly ILogic _logic;
 
-        public Form1()
+        /// <summary>
+        /// Создаёт главную форму и получает бизнес-логику через внедрение зависимостей.
+        /// </summary>
+        /// <param name="logic">Интерфейс бизнес-логики приложения.</param>
+        public Form1(ILogic logic)
         {
             InitializeComponent();
-            _logic = new Logic(_uow);
+
+            _logic = logic ?? throw new ArgumentNullException(nameof(logic));
+
             RefreshGrid2();
             RefreshDiscountGrid();
         }
 
         /// <summary>
-        /// 
+        /// Добавляет новую пиццу.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void BtnAdd_Click_Click(object sender, EventArgs e)
         {
             try
@@ -59,10 +67,8 @@ namespace PizzaWinForms
         }
 
         /// <summary>
-        /// 
+        /// Изменяет данные выбранной пиццы.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void BtnUpdate_Click(object sender, EventArgs e)
         {
             try
@@ -116,11 +122,10 @@ namespace PizzaWinForms
                 MessageBox.Show("Ошибка: " + ex.Message);
             }
         }
+
         /// <summary>
-        /// 
+        /// Удаляет выбранную пиццу.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void BtnDelete_Click(object sender, EventArgs e)
         {
             try
@@ -162,20 +167,16 @@ namespace PizzaWinForms
         }
 
         /// <summary>
-        /// 
+        /// Обновляет таблицу пицц.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void RefreshGrid_Click(object sender, EventArgs e)
         {
             RefreshGrid2();
         }
 
         /// <summary>
-        /// 
+        /// Фильтрует пиццы по диапазону цен.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void BtnFilterByPrice_Click(object sender, EventArgs e)
         {
             try
@@ -210,10 +211,8 @@ namespace PizzaWinForms
         }
 
         /// <summary>
-        /// 
+        /// Показывает статистику по пиццам.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void BtnStatistics_Click(object sender, EventArgs e)
         {
             try
@@ -234,7 +233,7 @@ namespace PizzaWinForms
         }
 
         /// <summary>
-        /// 
+        /// Обновляет таблицу пицц данными из бизнес-логики.
         /// </summary>
         private void RefreshGrid2()
         {
@@ -242,6 +241,11 @@ namespace PizzaWinForms
             Grid.DataSource = BuildPizzaRows(_logic.ReadAll());
         }
 
+        /// <summary>
+        /// Преобразует список пицц в данные для отображения в таблице.
+        /// </summary>
+        /// <param name="pizzas">Список пицц.</param>
+        /// <returns>Список подготовленных строк таблицы.</returns>
         private List<PizzaDisplay> BuildPizzaRows(List<Pizza> pizzas)
         {
             return pizzas.Select(p => new PizzaDisplay
@@ -256,7 +260,7 @@ namespace PizzaWinForms
         }
 
         /// <summary>
-        /// 
+        /// Очищает поля ввода данных пиццы.
         /// </summary>
         private void ClearFields()
         {
@@ -266,16 +270,14 @@ namespace PizzaWinForms
             checkBox1.Checked = false;
         }
 
-
-
-
-
+        /// <summary>
+        /// Заполняет поля данными выбранной пиццы.
+        /// </summary>
         private void Grid_SelectionChanged(object sender, DataGridViewCellEventArgs e)
         {
             if (Grid.CurrentRow == null)
                 return;
 
-            // Защита от строки "новой записи" (если AllowUserToAddRows = true)
             if (Grid.CurrentRow.IsNewRow)
                 return;
 
@@ -287,6 +289,9 @@ namespace PizzaWinForms
             checkBox1.Checked = pp == "Да";
         }
 
+        /// <summary>
+        /// Обновляет таблицу правил скидок.
+        /// </summary>
         private void RefreshDiscountGrid()
         {
             DiscountGrid.DataSource = null;
@@ -299,6 +304,9 @@ namespace PizzaWinForms
                 }).ToList();
         }
 
+        /// <summary>
+        /// Сохраняет новое правило скидки.
+        /// </summary>
         private void SaveDiscountButton_Click(object sender, EventArgs e)
         {
             try
@@ -308,6 +316,7 @@ namespace PizzaWinForms
                     MessageBox.Show("Размер введён неправильно.");
                     return;
                 }
+
                 if (!decimal.TryParse(DiscountPercentTextBox.Text, out decimal discount))
                 {
                     MessageBox.Show("Размер скидки введён неправильно.");
@@ -315,58 +324,121 @@ namespace PizzaWinForms
                 }
 
                 _logic.SaveSizeDiscount(size, discount);
+
                 RefreshDiscountGrid();
                 RefreshGrid2();
                 ClearDiscountFields();
-                MessageBox.Show($"Для размера {size} см установлена скидка {discount:0.##}%.");
+
+                MessageBox.Show(
+                    $"Для размера {size} см установлена скидка {discount:0.##}%."
+                );
             }
-            catch (Exception ex) { MessageBox.Show("Ошибка: " + ex.Message); }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка: " + ex.Message);
+            }
         }
 
+        /// <summary>
+        /// Удаляет выбранное правило скидки.
+        /// </summary>
         private void DeleteDiscountButton_Click(object sender, EventArgs e)
         {
             try
             {
-                if (DiscountGrid.CurrentRow == null) { MessageBox.Show("Выберите правило скидки."); return; }
-                if (!int.TryParse(DiscountGrid.CurrentRow.Cells["Id"].Value?.ToString(), out int id)) return;
+                if (DiscountGrid.CurrentRow == null)
+                {
+                    MessageBox.Show("Выберите правило скидки.");
+                    return;
+                }
+
+                if (!int.TryParse(
+                    DiscountGrid.CurrentRow.Cells["Id"].Value?.ToString(),
+                    out int id))
+                {
+                    return;
+                }
 
                 if (_logic.DeleteSizeDiscount(id))
                 {
                     RefreshDiscountGrid();
                     RefreshGrid2();
                     ClearDiscountFields();
+
                     MessageBox.Show("Правило скидки удалено.");
                 }
             }
-            catch (Exception ex) { MessageBox.Show("Ошибка: " + ex.Message); }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка: " + ex.Message);
+            }
         }
 
+        /// <summary>
+        /// Заполняет поля данными выбранного правила скидки.
+        /// </summary>
         private void DiscountGrid_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (DiscountGrid.CurrentRow == null || DiscountGrid.CurrentRow.IsNewRow) return;
-            DiscountSizeTextBox.Text = DiscountGrid.CurrentRow.Cells["Размер"].Value?.ToString() ?? "";
-            DiscountPercentTextBox.Text = DiscountGrid.CurrentRow.Cells["Скидка"].Value?.ToString() ?? "";
+            if (DiscountGrid.CurrentRow == null || DiscountGrid.CurrentRow.IsNewRow)
+                return;
+
+            DiscountSizeTextBox.Text =
+                DiscountGrid.CurrentRow.Cells["Размер"].Value?.ToString() ?? "";
+
+            DiscountPercentTextBox.Text =
+                DiscountGrid.CurrentRow.Cells["Скидка"].Value?.ToString() ?? "";
         }
 
+        /// <summary>
+        /// Очищает поля ввода правила скидки.
+        /// </summary>
         private void ClearDiscountFields()
         {
             DiscountSizeTextBox.Text = "";
             DiscountPercentTextBox.Text = "";
         }
 
+        /// <summary>
+        /// Обрабатывает изменение текста в поле названия пиццы.
+        /// </summary>
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-
         }
     }
+
+    /// <summary>
+    /// Модель строки для отображения информации о пицце в таблице.
+    /// </summary>
     public class PizzaDisplay
     {
+        /// <summary>
+        /// Идентификатор пиццы.
+        /// </summary>
         public int Id { get; set; }
+
+        /// <summary>
+        /// Название пиццы.
+        /// </summary>
         public string Название { get; set; }
+
+        /// <summary>
+        /// Цена пиццы без скидки.
+        /// </summary>
         public decimal Цена { get; set; }
+
+        /// <summary>
+        /// Цена пиццы с учётом скидки.
+        /// </summary>
         public decimal ЦенаСоСкидкой { get; set; }
+
+        /// <summary>
+        /// Признак ПП-пиццы.
+        /// </summary>
         public string ПП { get; set; }
+
+        /// <summary>
+        /// Размер пиццы в сантиметрах.
+        /// </summary>
         public int Размер { get; set; }
     }
 }
-

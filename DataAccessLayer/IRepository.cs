@@ -1,43 +1,45 @@
-﻿using System.Collections.Generic;
+﻿
+using System.Collections.Generic;
 using PizzaModel;
 
 namespace DataAccessLayer
 {
     /// <summary>
-    /// Интерфейс репозитория для CRUD-операций.
+    /// Универсальный интерфейс репозитория.
+    /// Определяет основные CRUD-операции для работы с сущностями.
     /// </summary>
-    /// <typeparam name="T">Тип сущности.</typeparam>
+    /// <typeparam name="T">Тип сущности, реализующей IDomainObject.</typeparam>
     public interface IRepository<T> where T : class, IDomainObject
     {
         /// <summary>
-        /// Добавить сущность.
+        /// Добавляет новую сущность.
         /// </summary>
-        /// <param name="entity">Что добавляем.</param>
+        /// <param name="entity">Сущность для добавления.</param>
         void Add(T entity);
 
         /// <summary>
-        /// Удалить сущность по Id.
+        /// Удаляет сущность по идентификатору.
         /// </summary>
-        /// <param name="id">Id для удаления.</param>
+        /// <param name="id">Идентификатор удаляемой сущности.</param>
         void Delete(int id);
 
         /// <summary>
-        /// Получить все сущности.
+        /// Возвращает список всех сущностей.
         /// </summary>
         /// <returns>Список сущностей.</returns>
         List<T> ReadAll();
 
         /// <summary>
-        /// Получить сущность по Id.
+        /// Возвращает сущность по идентификатору.
         /// </summary>
-        /// <param name="id">Id для поиска.</param>
-        /// <returns>Сущность или null.</returns>
+        /// <param name="id">Идентификатор искомой сущности.</param>
+        /// <returns>Найденная сущность или null, если она отсутствует.</returns>
         T ReadById(int id);
 
         /// <summary>
-        /// Обновить сущность.
+        /// Обновляет существующую сущность.
         /// </summary>
-        /// <param name="entity">Сущность с новыми данными.</param>
+        /// <param name="entity">Сущность с обновлёнными данными.</param>
         void Update(T entity);
     }
 }

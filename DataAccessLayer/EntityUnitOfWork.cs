@@ -6,7 +6,8 @@ using PizzaModel;
 namespace DataAccessLayer
 {
     /// <summary>
-    /// Unit of Work для Entity Framework Core.
+    /// Реализация Unit of Work с использованием Entity Framework Core.
+    /// Управляет репозиториями, сохранением изменений и транзакциями.
     /// </summary>
     public class EntityUnitOfWork : IUnitOfWork
     {
@@ -14,18 +15,23 @@ namespace DataAccessLayer
         private IDbContextTransaction _transaction;
 
         /// <summary>
-        /// Репозиторий пицц.
+        /// Репозиторий для работы с пиццами.
         /// </summary>
         public IRepository<Pizza> Pizzas { get; }
 
         /// <summary>
-        /// Репозиторий скидок.
+        /// Репозиторий для работы со скидками.
         /// </summary>
         public IRepository<SizeDiscount> Discounts { get; }
 
-        public EntityUnitOfWork()
+        /// <summary>
+        /// Создаёт Unit of Work с указанным контекстом базы данных.
+        /// Инициализирует репозитории и проверяет наличие базы данных.
+        /// </summary>
+        /// <param name="context">Контекст базы данных.</param>
+        public EntityUnitOfWork(PizzaDbContext context)
         {
-            _context = new PizzaDbContext();
+            _context = context;
 
             _context.Database.EnsureCreated();
 
@@ -33,9 +39,7 @@ namespace DataAccessLayer
             Discounts = new EntityRepository<SizeDiscount>(_context);
         }
 
-        /// <summary>
-        /// Начинает транзакцию.
-        /// </summary>
+        /// <inheritdoc/>
         public void BeginTransaction()
         {
             if (_transaction != null)
@@ -45,10 +49,7 @@ namespace DataAccessLayer
             _transaction = _context.Database.BeginTransaction();
         }
 
-        /// <summary>
-        /// Сохраняет изменения и фиксирует транзакцию,
-        /// если она была начата.
-        /// </summary>
+        /// <inheritdoc/>
         public void Commit()
         {
             try
@@ -68,9 +69,7 @@ namespace DataAccessLayer
             }
         }
 
-        /// <summary>
-        /// Отменяет транзакцию.
-        /// </summary>
+        /// <inheritdoc/>
         public void Rollback()
         {
             if (_transaction == null)
@@ -87,9 +86,7 @@ namespace DataAccessLayer
             }
         }
 
-        /// <summary>
-        /// Освобождает ресурсы.
-        /// </summary>
+        /// <inheritdoc/>
         public void Dispose()
         {
             _transaction?.Dispose();

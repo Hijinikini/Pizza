@@ -7,8 +7,9 @@ using PizzaModel;
 namespace DataAccessLayer
 {
     /// <summary>
-    /// Unit of Work для Dapper.
-    /// Управляет общим соединением и транзакцией.
+    /// Реализация Unit of Work с использованием Dapper.
+    /// Управляет общим подключением к базе данных,
+    /// репозиториями и транзакциями.
     /// </summary>
     public class DapperUnitOfWork : IUnitOfWork
     {
@@ -18,9 +19,20 @@ namespace DataAccessLayer
         private readonly string _connectionString =
             @"Server=(localdb)\MSSQLLocalDB;Database=PizzaDB;Trusted_Connection=True;TrustServerCertificate=True;";
 
+        /// <summary>
+        /// Репозиторий для работы с пиццами.
+        /// </summary>
         public IRepository<Pizza> Pizzas { get; }
+
+        /// <summary>
+        /// Репозиторий для работы со скидками.
+        /// </summary>
         public IRepository<SizeDiscount> Discounts { get; }
 
+        /// <summary>
+        /// Создаёт Unit of Work, открывает подключение к базе данных
+        /// и инициализирует репозитории.
+        /// </summary>
         public DapperUnitOfWork()
         {
             _connection = new SqlConnection(_connectionString);
@@ -33,9 +45,7 @@ namespace DataAccessLayer
                 _connection, "SizeDiscounts", () => _transaction);
         }
 
-        /// <summary>
-        /// Начинает транзакцию.
-        /// </summary>
+        /// <inheritdoc/>
         public void BeginTransaction()
         {
             if (_transaction != null)
@@ -45,9 +55,7 @@ namespace DataAccessLayer
             _transaction = _connection.BeginTransaction();
         }
 
-        /// <summary>
-        /// Фиксирует изменения транзакции.
-        /// </summary>
+        /// <inheritdoc/>
         public void Commit()
         {
             if (_transaction == null)
@@ -69,9 +77,7 @@ namespace DataAccessLayer
             }
         }
 
-        /// <summary>
-        /// Отменяет изменения транзакции.
-        /// </summary>
+        /// <inheritdoc/>
         public void Rollback()
         {
             if (_transaction == null)
@@ -88,13 +94,12 @@ namespace DataAccessLayer
             }
         }
 
-        /// <summary>
-        /// Освобождает транзакцию и соединение.
-        /// </summary>
+        /// <inheritdoc/>
         public void Dispose()
         {
             _transaction?.Dispose();
             _transaction = null;
+
             _connection.Dispose();
         }
     }

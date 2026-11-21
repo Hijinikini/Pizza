@@ -7,5 +7,13 @@ namespace PizzaLogic
     /// </summary>
     public interface ILogic : IPizzaLogic, IDiscountLogic
     {
+        /// <summary>
+        /// Событие уведомления об изменении списка пицц.
+        /// </summary>
+        event System.EventHandler? PizzasChanged;
+        /// <summary>
+        /// Событие уведомления об изменении правил скидок.
+        /// </summary>
+        event System.EventHandler? DiscountsChanged;
     }
 }

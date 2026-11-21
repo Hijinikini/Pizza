@@ -1,21 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<OutputType>WinExe</OutputType>
-		<TargetFramework>net8.0-windows</TargetFramework>
-		<Nullable>enable</Nullable>
-		<UseWindowsForms>true</UseWindowsForms>
-		<ImplicitUsings>enable</ImplicitUsings>
-	</PropertyGroup>
-
-	<ItemGroup>
-	  <PackageReference Include="Ninject" Version="3.3.6" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\PizzaModel\PizzaModel.csproj" />
-		<ProjectReference Include="..\PizzaLogic\PizzaLogic.csproj" />
-		<ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj" />
-	</ItemGroup>
-
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.csproj" />
+    <ProjectReference Include="..\Presenter\Presenter.csproj" />
+  </ItemGroup>
 </Project>

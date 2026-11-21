@@ -10,6 +10,14 @@ namespace PizzaLogic
     /// </summary>
     public class Logic : ILogic
     {
+        /// <summary>
+        /// Событие уведомления об изменении списка пицц.
+        /// </summary>
+        public event System.EventHandler? PizzasChanged;
+        /// <summary>
+        /// Событие уведомления об изменении правил скидок.
+        /// </summary>
+        public event System.EventHandler? DiscountsChanged;
         private readonly IPizzaLogic _pizzaLogic;
         private readonly IDiscountLogic _discountLogic;
 
@@ -29,7 +37,9 @@ namespace PizzaLogic
         /// </summary>
         public Pizza Create(string name, decimal price, bool type, int size)
         {
-            return _pizzaLogic.Create(name, price, type, size);
+            var pizza = _pizzaLogic.Create(name, price, type, size);
+            PizzasChanged?.Invoke(this, System.EventArgs.Empty);
+            return pizza;
         }
 
         /// <summary>
@@ -53,7 +63,9 @@ namespace PizzaLogic
         /// </summary>
         public bool Update(int id, string name, decimal price, bool type, int size)
         {
-            return _pizzaLogic.Update(id, name, price, type, size);
+            bool updated = _pizzaLogic.Update(id, name, price, type, size);
+            if (updated) PizzasChanged?.Invoke(this, System.EventArgs.Empty);
+            return updated;
         }
 
         /// <summary>
@@ -61,7 +73,9 @@ namespace PizzaLogic
         /// </summary>
         public bool Delete(int id)
         {
-            return _pizzaLogic.Delete(id);
+            bool deleted = _pizzaLogic.Delete(id);
+            if (deleted) PizzasChanged?.Invoke(this, System.EventArgs.Empty);
+            return deleted;
         }
 
         /// <summary>
@@ -93,7 +107,10 @@ namespace PizzaLogic
         /// </summary>
         public SizeDiscount SaveSizeDiscount(int size, decimal discountPercent)
         {
-            return _discountLogic.SaveSizeDiscount(size, discountPercent);
+            var discount = _discountLogic.SaveSizeDiscount(size, discountPercent);
+            DiscountsChanged?.Invoke(this, System.EventArgs.Empty);
+            PizzasChanged?.Invoke(this, System.EventArgs.Empty);
+            return discount;
         }
 
         /// <summary>
@@ -101,7 +118,13 @@ namespace PizzaLogic
         /// </summary>
         public bool DeleteSizeDiscount(int id)
         {
-            return _discountLogic.DeleteSizeDiscount(id);
+            bool deleted = _discountLogic.DeleteSizeDiscount(id);
+            if (deleted)
+            {
+                DiscountsChanged?.Invoke(this, System.EventArgs.Empty);
+                PizzasChanged?.Invoke(this, System.EventArgs.Empty);
+            }
+            return deleted;
         }
 
         /// <summary>

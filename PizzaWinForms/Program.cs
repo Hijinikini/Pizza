@@ -1,29 +1,23 @@
+п»їusing Shared;
+using Presenter;
 
-using System;
-using System.Windows.Forms;
-using Ninject;
-using PizzaLogic;
+namespace PizzaWinForms;
 
-namespace PizzaWinForms
+/// <summary>
+/// РўРѕС‡РєР° РІС…РѕРґР° РїСЂРёР»РѕР¶РµРЅРёСЏ, Р·Р°РїСѓСЃРєР°СЋС‰Р°СЏ РІС‹Р±СЂР°РЅРЅРѕРµ РїСЂРµРґСЃС‚Р°РІР»РµРЅРёРµ.
+/// </summary>
+internal static class Program
 {
+    [STAThread]
     /// <summary>
-    /// Точка входа в приложение.
+    /// Р’С‹РїРѕР»РЅСЏРµС‚ РѕРїРµСЂР°С†РёСЋ Main РІ СЂР°РјРєР°С… РґР°РЅРЅРѕРіРѕ РєРѕРјРїРѕРЅРµРЅС‚Р°.
     /// </summary>
-    internal static class Program
+    private static void Main()
     {
-        /// <summary>
-        /// Запускает приложение и настраивает внедрение зависимостей.
-        /// </summary>
-        [STAThread]
-        static void Main()
-        {
-            ApplicationConfiguration.Initialize();
-
-            using (var ninjectKernel = new StandardKernel(new SimpleConfigModule()))
-            {
-                Form1 form = ninjectKernel.Get<Form1>();
-                Application.Run(form);
-            }
-        }
+        ApplicationConfiguration.Initialize();
+        IView view = WinFormsViewFactory.Create();
+        CompositionRoot.CreatePresenter(view);
+        view.Run();
+        CompositionRoot.Dispose();
     }
 }
